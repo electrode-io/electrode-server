@@ -1,0 +1,44 @@
+{
+  "name": "@walmart/electrode-server",
+  "version": "1.0.0",
+  "description": "A configurable Hapi web server",
+  "main": "lib/index.js",
+  "scripts": {
+    "lint": "eslint --color -c node_modules/eslint-config-defaults/configurations/walmart/es6-node.js .",
+    "test": "mocha",
+    "coverage": "istanbul cover node_modules/.bin/_mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gecgithub01.walmart.com/electrode/electrode-server.git"
+  },
+  "keywords": [
+    "electrode",
+    "hapi",
+    "node",
+    "webserver"
+  ],
+  "author": "Dave Stevens <dstevens@walmartlabs.com>",
+  "private": true,
+  "license": "private",
+  "engines": {
+    "node": ">= 4.2.2"
+  },
+  "dependencies": {
+    "bluebird": "^3.0.6",
+    "chalk": "^1.1.1",
+    "crumb": "^5.0.0",
+    "hapi": "^11.0.5",
+    "hoek": "^3.0.1",
+    "inert": "^3.2.0",
+    "lodash": "^3.10.1"
+  },
+  "devDependencies": {
+    "chai": "^3.4.1",
+    "eslint": "^1.10.3",
+    "eslint-config-defaults": "^7.1.1",
+    "eslint-plugin-filenames": "^0.2.0",
+    "istanbul": "^0.4.1",
+    "mocha": "^2.3.4"
+  }
+}
