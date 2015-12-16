@@ -4,6 +4,7 @@
 
 const electrodeServer = require("..");
 const chai = require("chai");
+const _ = require("lodash");
 
 describe("electrode-server", function () {
 
@@ -36,7 +37,7 @@ describe("electrode-server", function () {
     electrodeServer("test/test/test1.js")
       .then(expectedError)
       .catch((e) => {
-        if (e.message && e.message.indexOf("Missing config file") >= 0) {
+        if (_.contains(e.message, "Missing config file")) {
           return done();
         }
         done(e);
@@ -58,7 +59,7 @@ describe("electrode-server", function () {
     electrodeServer("./test/data/bad-config.js")
       .then(expectedError)
       .catch((e) => {
-        if (e.message && e.message.indexOf("Error in config") >= 0) {
+        if (_.contains(e.message, "Error in config")) {
           return done();
         }
         done(e);
@@ -70,7 +71,7 @@ describe("electrode-server", function () {
     electrodeServer()
       .then(expectedError)
       .catch((e) => {
-        if (e.message && e.message.indexOf("config/electrode-server/server.js") >= 0) {
+        if (_.contains(e.message, "config/electrode-server/server.js")) {
           return done();
         }
         done(e);
@@ -119,7 +120,7 @@ describe("electrode-server", function () {
     electrodeServer("./test/data/dup-plugin.js")
       .then(expectedError)
       .catch((e) => {
-        if (e.message && e.message.indexOf("error starting the Hapi.js server") >= 0) {
+        if (_.contains(e.message, "error starting the Hapi.js server")) {
           done();
         } else {
           done(e);
