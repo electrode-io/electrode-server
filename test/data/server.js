@@ -1,4 +1,3 @@
-/* eslint-disable strict, func-style */
 "use strict";
 
 function pluginNoPriority(server, options, next) {

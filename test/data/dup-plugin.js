@@ -1,4 +1,5 @@
-/* eslint-disable strict, func-style */
+"use strict";
+
 function nulPlugin(server, options, next) {
   next();
 }

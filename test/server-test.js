@@ -1,5 +1,3 @@
-/* eslint-env mocha */
-/* eslint-disable strict, max-statements, no-invalid-this, prefer-arrow-callback */
 "use strict";
 
 const electrodeServer = require("..");

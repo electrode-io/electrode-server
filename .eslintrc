@@ -1,0 +1,12 @@
+{
+  "extends": [
+    "defaults/configurations/walmart/es6-node"
+  ],
+  "ecmaFeatures": {
+    "modules": false
+  },
+  "rules": {
+    "func-style": [0, "declaration"],
+    "object-shorthand": 0
+  }
+}
