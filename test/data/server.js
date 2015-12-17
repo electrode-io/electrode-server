@@ -56,6 +56,11 @@ module.exports = {
       priority: 499,
       register: nulPlugin1
     },
+    plugin1Disable: {
+      priority: 499,
+      register: nulPlugin1,
+      enable: false
+    },
     testStringPriority: {
       priority: "500",
       register: nulPlugin2
