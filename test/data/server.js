@@ -2,8 +2,7 @@
 "use strict";
 
 function pluginNoPriority(server, options, next) {
-  server.app.plugin1 = true;
-  return next();
+  return next(!server.app.plugin2 && "pluginNoPriority is called before plugin2");
 }
 
 pluginNoPriority.attributes = {
@@ -25,6 +24,7 @@ nulPlugin1.attributes = {
 
 
 function nulPlugin2(server, options, next) {
+  server.app.plugin2 = true;
   return next(!server.app.plugin1 && "plugin2 is called before plugin1");
 }
 

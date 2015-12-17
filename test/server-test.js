@@ -5,28 +5,43 @@
 const electrodeServer = require("..");
 const chai = require("chai");
 const _ = require("lodash");
+const request = require("superagent");
+const Bluebird = require("bluebird");
 
 describe("electrode-server", function () {
 
-  it("should start up a default server twice", function (done) {
-    const x2 = () => electrodeServer({})
-      .then((server) => server.stop(done))
-      .catch(done);
+  const stopServer = (server) =>
+    new Bluebird((resolve, reject) =>
+      server.stop((stopErr) => stopErr ? reject(stopErr) : resolve()));
 
-    electrodeServer({})
-      .then((server) => {
-        server.stop(x2);
-      })
-      .catch(done);
+  const verifyServer = (server) => new Bluebird((resolve) => {
+    request.get("http://localhost:3000/html/test.html").end((err, resp) => {
+      chai.assert.equal(err.message, "Not Found");
+      chai.assert.equal(err.status, 404);
+      chai.assert.ok(resp, "No response from server");
+      chai.assert.ok(resp.body, "Response has no body");
+      chai.assert.equal(resp.body.error, "Not Found");
+      chai.assert.equal(resp.body.statusCode, 404);
+      resolve(server);
+    });
+  })
+    .then(stopServer);
+
+
+  const testSimplePromise = () => electrodeServer({}).then(verifyServer);
+
+  const testSimpleCallback = () =>
+    new Bluebird((resolve, reject) => {
+      electrodeServer({}, (err, server) => err ? reject(err) : resolve(server));
+    })
+      .then(verifyServer);
+
+  it("should start up a default server twice", function (done) {
+    testSimplePromise().then(testSimplePromise).then(done).catch(done);
   });
 
-
   it("should start up a server twice @callbacks", function (done) {
-
-    const x2 = () => electrodeServer({}, (err, server) => server.stop(done));
-    electrodeServer({}, (err, server) => {
-      server.stop(x2);
-    });
+    testSimpleCallback().then(testSimpleCallback).then(done).catch(done);
   });
 
   const expectedError = () => {
@@ -52,6 +67,21 @@ describe("electrode-server", function () {
       }
       done();
     });
+  });
+
+  it("should fail for PORT in use", function (done) {
+
+    electrodeServer({}).then((server) =>
+        electrodeServer({})
+          .then(expectedError)
+          .catch((err) => {
+            if (_.contains(err.message, "is already in use")) {
+              return stopServer(server);
+            }
+            done(err);
+          })
+      )
+      .then(done);
   });
 
 
@@ -80,27 +110,24 @@ describe("electrode-server", function () {
 
   it("should start up with a good @empty_config", function (done) {
     electrodeServer("./test/data/empty-config.js")
-      .then((server) => {
-        server.stop(() => done());
-      })
+      .then(stopServer)
+      .then(() => done())
       .catch(done);
   });
 
 
   it("should start up with @ES6_style_config", function (done) {
     electrodeServer("./test/data/es6-config.js")
-      .then((server) => {
-        server.stop(() => done());
-      })
+      .then(stopServer)
+      .then(() => done())
       .catch(done);
   });
 
 
   it("should start up with @correct_plugins_priority", function (done) {
     electrodeServer("./test/data/server.js")
-      .then((server) => {
-        server.stop(() => done());
-      })
+      .then(stopServer)
+      .then(() => done())
       .catch(done);
   });
 

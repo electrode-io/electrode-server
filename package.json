@@ -31,7 +31,8 @@
     "hapi": "^11.0.5",
     "hoek": "^3.0.1",
     "inert": "^3.2.0",
-    "lodash": "^3.10.1"
+    "lodash": "^3.10.1",
+    "superagent": "^1.6.1"
   },
   "devDependencies": {
     "chai": "^3.4.1",
