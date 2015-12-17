@@ -1,2 +1,3 @@
-/* eslint-disable strict, func-style, no-unused-vars, no-undef */
+/* eslint-disable no-unused-vars, no-undef */
+"use strict";
 const x = bad;

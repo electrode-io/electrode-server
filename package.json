@@ -4,7 +4,7 @@
   "description": "A configurable Hapi web server",
   "main": "lib/index.js",
   "scripts": {
-    "lint": "eslint --color -c node_modules/eslint-config-defaults/configurations/walmart/es6-node.js .",
+    "lint": "eslint .",
     "test": "mocha",
     "coverage": "istanbul cover node_modules/.bin/_mocha"
   },

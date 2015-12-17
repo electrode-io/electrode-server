@@ -1,0 +1,13 @@
+{
+  "extends": [
+    "../.eslintrc"
+  ],
+  "rules": {
+    "max-statements": 0,
+    "no-invalid-this": 0,
+    "prefer-arrow-callback": 0
+  },
+  "env": {
+    "mocha": true
+  }
+}
