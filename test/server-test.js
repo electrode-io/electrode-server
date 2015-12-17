@@ -24,17 +24,16 @@ describe("electrode-server", function () {
       chai.assert.equal(resp.body.statusCode, 404);
       resolve(server);
     });
-  })
-    .then(stopServer);
+  });
 
-
-  const testSimplePromise = () => electrodeServer({}).then(verifyServer);
+  const testSimplePromise = () => electrodeServer({}).then(verifyServer).then(stopServer);
 
   const testSimpleCallback = () =>
     new Bluebird((resolve, reject) => {
       electrodeServer({}, (err, server) => err ? reject(err) : resolve(server));
     })
-      .then(verifyServer);
+      .then(verifyServer)
+      .then(stopServer);
 
   it("should start up a default server twice", function (done) {
     testSimplePromise().then(testSimplePromise).then(done).catch(done);
@@ -126,6 +125,33 @@ describe("electrode-server", function () {
 
   it("should start up with @correct_plugins_priority", function (done) {
     electrodeServer("./test/data/server.js")
+      .then(stopServer)
+      .then(() => done())
+      .catch(done);
+  });
+
+  it("should return static file", function (done) {
+    const verifyServerStatic = (server) => new Bluebird((resolve) => {
+      request.get("http://localhost:3000/html/hello.html").end((err, resp) => {
+        chai.assert(resp, "Server didn't return response");
+        chai.assert(_.contains(resp.text, "Hello Test!"),
+          "response not contain expected string");
+        resolve(server);
+      });
+    });
+
+    const config = {
+      plugins: {
+        staticPaths: {
+          options: {
+            pathPrefix: "test/"
+          }
+        }
+      }
+    };
+
+    electrodeServer(config)
+      .then(verifyServerStatic)
       .then(stopServer)
       .then(() => done())
       .catch(done);
