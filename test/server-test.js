@@ -124,6 +124,7 @@ describe("electrode-server", function () {
   it("should start up with @correct_plugins_priority", function (done) {
     const verify = (server) => {
       chai.assert.ok(server.plugins.testPlugin, "testPlugin missing in server");
+      chai.assert.ok(server.plugins.es6StylePlugin, "es6StylePlugin missing in server");
       return server;
     };
     electrodeServer("./test/data/server.js")

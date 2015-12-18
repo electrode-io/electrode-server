@@ -66,6 +66,9 @@ module.exports = {
     },
     testPlugin: {
       module: "./test/plugins/test-plugin"
+    },
+    es6StylePlugin: {
+      module: "./test/plugins/es6-style-plugin"
     }
   },
   server: {
