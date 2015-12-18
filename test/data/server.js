@@ -63,8 +63,10 @@ module.exports = {
     testStringPriority: {
       priority: "500",
       register: nulPlugin2
+    },
+    testPlugin: {
+      module: "./test/plugins/test-plugin"
     }
-
   },
   server: {
     app: {
