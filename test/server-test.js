@@ -122,7 +122,12 @@ describe("electrode-server", function () {
 
 
   it("should start up with @correct_plugins_priority", function (done) {
+    const verify = (server) => {
+      chai.assert.ok(server.plugins.testPlugin, "testPlugin missing in server");
+      return server;
+    };
     electrodeServer("./test/data/server.js")
+      .then(verify)
       .then(stopServer)
       .then(() => done())
       .catch(done);
