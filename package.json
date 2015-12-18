@@ -19,6 +19,24 @@
     "webserver"
   ],
   "author": "Dave Stevens <dstevens@walmartlabs.com>",
+  "contributors": [
+    {
+      "name": "Dave Stevens",
+      "email": "dstevens@walmartlabs.com"
+    },
+    {
+      "name": "Jack Herrington",
+      "email": "jherrington@walmartlabs.com"
+    },
+    {
+      "name": "Perolof Bondesson",
+      "email": ""
+    },
+    {
+      "name": "Joel Chen",
+      "email": "xchen@walmartlabs.com"
+    }
+  ],
   "private": true,
   "license": "private",
   "engines": {
