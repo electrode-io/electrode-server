@@ -106,7 +106,12 @@ describe("electrode-server", function () {
   });
 
   it("should start up with a good @empty_config", function (done) {
+    const verifyServices = (server) => {
+      chai.assert(server.app.services.registry, "registry service is not present in server.app");
+      return server;
+    };
     electrodeServer("./test/data/empty-config.js")
+      .then(verifyServices)
       .then(stopServer)
       .then(() => done())
       .catch(done);
