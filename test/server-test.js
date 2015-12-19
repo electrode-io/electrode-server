@@ -173,6 +173,17 @@ describe("electrode-server", function () {
   });
 
 
+  it("should fail start up due to @bad_plugin", function (done) {
+    electrodeServer("./test/data/bad-plugin.js")
+      .then(expectedError)
+      .catch((e) => {
+        if (_.contains(e._err.message, "Failed loading module ./test/plugins/err-plugin")) {
+          return done();
+        }
+        done(e);
+      });
+  });
+
   it("should fail start up due to @duplicate_plugin", function (done) {
     electrodeServer("./test/data/dup-plugin.js")
       .then(expectedError)
