@@ -1,12 +1,13 @@
 {
   "name": "@walmart/electrode-server",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A configurable Hapi web server",
   "main": "lib/index.js",
   "scripts": {
     "lint": "eslint .",
     "test": "mocha",
-    "coverage": "istanbul cover node_modules/.bin/_mocha"
+    "coverage": "istanbul cover node_modules/.bin/_mocha",
+    "prepublish": "npm test"
   },
   "repository": {
     "type": "git",
@@ -43,6 +44,7 @@
     "node": ">= 4.2.2"
   },
   "dependencies": {
+    "@walmart/electrode-service-initializer": "^1.0.0",
     "bluebird": "^3.0.6",
     "chalk": "^1.1.1",
     "crumb": "^5.0.0",
