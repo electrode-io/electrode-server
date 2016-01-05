@@ -56,10 +56,6 @@
     "lodash": "^3.10.1",
     "superagent": "^1.6.1"
   },
-  "peerDependencies": {
-    "bluebird": "^3.0.6",
-    "config": "^1.17.1"
-  },
   "devDependencies": {
     "chai": "^3.4.1",
     "eslint": "^1.10.3",
