@@ -48,12 +48,17 @@
     "@walmart/service-registry-client": "^1.0.0",
     "bluebird": "^3.0.6",
     "chalk": "^1.1.1",
+    "config": "^1.17.1",
     "crumb": "^5.0.0",
     "hapi": "^11.0.5",
     "hoek": "^3.0.1",
     "inert": "^3.2.0",
     "lodash": "^3.10.1",
     "superagent": "^1.6.1"
+  },
+  "peerDependencies": {
+    "bluebird": "^3.0.6",
+    "config": "^1.17.1"
   },
   "devDependencies": {
     "chai": "^3.4.1",
