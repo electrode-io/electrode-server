@@ -4,15 +4,15 @@ const electrodeServer = require("..");
 const chai = require("chai");
 const _ = require("lodash");
 const request = require("superagent");
-const Bluebird = require("bluebird");
+const Promise = require("bluebird");
 
 describe("electrode-server", function () {
 
   const stopServer = (server) =>
-    new Bluebird((resolve, reject) =>
+    new Promise((resolve, reject) =>
       server.stop((stopErr) => stopErr ? reject(stopErr) : resolve()));
 
-  const verifyServer = (server) => new Bluebird((resolve) => {
+  const verifyServer = (server) => new Promise((resolve) => {
     request.get("http://localhost:3000/html/test.html").end((err, resp) => {
       chai.assert.equal(err.message, "Not Found");
       chai.assert.equal(err.status, 404);
@@ -27,7 +27,7 @@ describe("electrode-server", function () {
   const testSimplePromise = () => electrodeServer({}).then(verifyServer).then(stopServer);
 
   const testSimpleCallback = () =>
-    new Bluebird((resolve, reject) => {
+    new Promise((resolve, reject) => {
       electrodeServer({}, (err, server) => err ? reject(err) : resolve(server));
     })
       .then(verifyServer)
@@ -140,7 +140,7 @@ describe("electrode-server", function () {
   });
 
   it("should return static file", function (done) {
-    const verifyServerStatic = (server) => new Bluebird((resolve) => {
+    const verifyServerStatic = (server) => new Promise((resolve) => {
       request.get("http://localhost:3000/html/hello.html").end((err, resp) => {
         chai.assert(resp, "Server didn't return response");
         chai.assert(_.contains(resp.text, "Hello Test!"),
