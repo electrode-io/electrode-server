@@ -1,4 +1,4 @@
-#Electrode Server
+# Electrode Server
 
 This is an imaginatively named, configurable web server using Hapi.js atop Node.js.
 
@@ -9,276 +9,191 @@ The intention is that you will extend via configuration, such that this provides
 functionality of a Hapi web server with React rendering, and within your own application you
 will add on the features, logic, etc unique to your situation.
 
-##Versioning
+## Versioning
 
 This module require Node v4.x+.
 
-##Installing
+## Installing
 
 `npm i --save @walmart/electrode-server`
 
-##Usage
+## Usage
 
-By convention, we house our server within a `server` directory, and our client code (React components, Flux stores,etc)
-within a `client` directory. You are not required to do this for `electrode-server` to work, but that is what
-we will do within this setup process.
-
-First, create the `server` directory:
-
-`mkdir server`
-
-Then, create `server/index.js` with this content:
+Electrode Server comes with enough defaults such that you can spin up a Hapi server at
+`http://localhost:3000` with one call:
 
 ```js
-require("@walmart/electrode-server");
+require("@walmart/electrode-server")();
 ```
 
-Next, we use a configuration file to set up the server for our application.
+Of course that doesn't do much but getting a 404 response from `http://localhost:3000`, so see below for configuring it. 
 
-In the root of your application, create a directory `config/electrode-server`:
 
-`mkdir -p config/electrode-server`
+## Configuration
 
-(It is possible that you already have a `config` directory for other purposes, hence
-the subdirectory for `electrode-server`)
-
-Next, create the configuration file `config/electrode-server/server.js` with the following content:
+You can pass in a config object that controls every aspect of the Hapi server.
 
 ```js
-module.exports = {
-  pageTitle: "My Application Name",
-  devServer: {
-    port: "2992"
-  },
-  plugins: {
-    registerRoutes: {
-      options: {
-        "/": {
-          view: "index",
-          content: null
+const config = {};
+require("@walmart/electrode-server")(config);
+```
+
+It's recommended that you use a configuration management tool to control
+your configurations based on `NODE_ENV`.
+
+[node-config](https://github.com/lorenwest/node-config) is one such tool.  [see below for more details](#node-config)
+
+## Configuration Options
+
+Here's what you can configure:
+
+All properties are optional (if not present, the default values shown
+below will be used).
+
+* `server` (Object) Server options to pass to [Hapi's `Hapi.Server`](http://hapijs.com/api#new-serveroptions) 
+
+   * _default_
+      * `server.app.config` is set to a object that's the combination of your config with `electrode-server's` defaults applied.
+
+    ```js    
+    {
+      server: {
+        app: {
+          electrode: true
         }
       }
     }
-  },
-  server: {
-    app: {
-      config: require("./default.json")
-    }
-  }
-};
-```
+    ```
 
-Now, all that is necessary is for you to build out your client in `client`, and then you can
-run `node server/index.js` to see it in action.
-
-If you have not built your client-side content yet and want to see `electrode-server` in action now,
-check out [react/Getting Started](https://gecgithub01.walmart.com/react/) for an example.
-
-##Configuration Options
-
-Here's what you can configure via the config file, with default values noted inline.
-
-`config/electrode-server/server.js` should export an object following the schema below. All properties
-are optional (if not present, the default values shown below will be used).
-
-_Note: You can write your configuration file using ES5 or ES6 syntax. That's a choice for you to make,
-`electrode-server` can handle either. We encourage you to use ES6, of course._
-
-* `pageTitle` (String) The value to be shown in the browser's title bar _default Untitled Awesome Web Application_
-* `devServer` (Object) Options for webpack's DevServer
-  - `host` (String) The host that webpack-dev-server runs on _default: 127.0.0.1_
-  - `port` (String) The port that webpack-dev-server runs on _default: 2992_
-* `server` (Object) Server options to pass to [Hapi's `Hapi.Server`](http://hapijs.com/api#new-serveroptions) _default: {}_
+   
 * `connections` (Object) Connections to setup for the Hapi server.  Each connection should be an object field and its key is used as the labels of the connection. 
+
    * _default_
+
+    ```js
+    {
+        default: {
+          host: process.env.HOST,
+          address: process.env.HOST_IP || "0.0.0.0",
+          port: parseInt(process.env.PORT, 10) || 3000,
+          routes: {
+            cors: true
+          }
+        }
+    }
+    ```
+
+* `plugins` (Object) plugin registration objects, converted to an array of its values and passed to [Hapi's server.register](http://hapijs.com/api#serverregisterplugins-options-callback)
+
+   * _default_
+
+    ```js
+    {
+      plugins: {
+        appConfig: {
+          priority: 10
+        },
+        csrf: {
+          priority: 15,
+          module: "crumb"
+        },
+        inert: {
+          priority: 100
+        },
+        staticPaths: {
+          priority: 120
+        }
+      }
+    }
+    ```
+
+## Default plugins
+
+`electrode-server` registers a few plugins by default.
+
+`csrf` is using [Hapi crumb plugin](https://github.com/hapijs/crumb) to provide CSRF support.
+
+`inert` is using [Hapi inert plugin](https://github.com/hapijs/inert) to handle static files.
+
+These two are `electrode-server's` internal plugins: 
+
+   * `appConfig` sets `req.app.config` to `server.app.config` as soon as a request comes in.  That's why its priority is low.
+   * `staticPaths` is a simple plugin that serves static files from `dist/js`, `dist/images`, and `dist/html`.
+
+If you want to turn off one of these default plugins, you can set its `enable` flag to false.  For example, to turn off
+the `csrf` plugin, in your config, do:
+
 ```js
 {
-    default: {
-      host: process.env.HOST,
-      address: process.env.HOST_IP || "0.0.0.0",
-      port: parseInt(process.env.PORT, 10) || 3000,
-      routes: {
-        cors: true
-      }
-    }
-}
-```
-* `plugins` (Object) plugin registration objects, converted to an array of its values and passed to [Hapi's server.register](http://hapijs.com/api#serverregisterplugins-options-callback)
-   * The plugins will be sorted by a field `priority` with integer values
-      * Default to `99999` if this field is missing or has no valid integer value (`NaN`) (string of number accepted)
-   * A plugin is turned off ***if and only if*** a field `enable` is set to `false`
-      * Default to `true` if this field is missing or any other value than `false`
-   * _default_:
-```js
-plugins: {
-  inert: {
-    priority: 10,
-    enable: true,
-    register: Inert
-  },
-  staticPaths: {
-    priority: 20,
-    enable: true,
-    register: StaticPaths
-  },
-  registerRoutes: {
-    priority: 200,
-    enable: true,
-    register: RegisterRoutes
-  }
-}
-```
-* `serverSideRendering` (Boolean) Toggle server-side rendering. _default: true_
-* `unbundledJS` (Object) Specify JavaScript files to be loaded at an available extension point in the index template
-  - `enterHead` (Array) Array of script objects (`{ src: "path to file" }`) to be inserted as `<script>` tags in the document `head` before anything else _default: null_
-  - `preBundle` (Array) Array of script objects (`{ src: "path to file" }`) to be inserted as `<script>` tags in the document `body` before the application's bundled JavaScript _default: null_
-* `unbundledStyle` (Array) Array of paths to stylesheets not part of the application itself (such as a CDN hosted stylesheet for a library or similar) _default: null_
-
-### Specifying routes for `registerRoutes` plugin
-
-The `registerRoutes` routes can be specified in its `options` field.  They should key/value pairs specifying paths within your application with their view and (optionally) initial content for server-side render _default: { "/": {view: "index"}}_
-  - _path_ (Object)
-    - `view` (String) Name of the view to be used for this path **required**
-    - `content` (String) Content to be rendered by the server when server-side rendering is used _optional_
-
-ie:
-
-```js
-plugins: {
-  registerRoutes: {
-    options: {
-      "/{args*}": {
-        view: "index",
-        content: (req) => {
-          return engine(req);
-        }
-      }
+  plugins: {
+    csrf: {
+      enable: false
     }
   }
 }
 ```
 
+## node-config
 
-##More advanced configuration
+To keep your environment specific configurations manageable, you should use
+a tool like [node-config](https://github.com/lorenwest/node-config).
 
-###Adding a plugin to be registered with Hapi via `server.register`
+It supports many different formats for your config files, from different 
+flavors of JSON to Yaml to a full blown JavaScript file, it's up to you.
 
-If you have a Hapi plugin that you want to use with `electrode-server` there is a simple way to do that within
-your configuration file. Here's an example using the Store Info Plugin:
+Once you have your config files setup like 
+[node-config recommended](https://github.com/lorenwest/node-config/wiki/Configuration-Files#config-directory), 
+you can simply pass node-config to electrode-server:
+
+```js
+const config = require("config");
+require("@walmart/electrode-server")(config);
+```
+
+## Adding a Hapi plugin 
+
+You can have `electrode-server` register any Hapi plugin that you want
+through your configuration file. Here's an example using the Store Info Plugin:
 
 First, install the plugin as you normally would from `npm`:
 
 `npm i --save @walmart/store-info-plugin`
 
-`require` (ES5) or `import` (ES6) in to your configuration file:
-
-**ES6**
-
-`import StoreInfoPlugin from "@walmart/store-info-plugin";`
-
-**ES5**
-
-`var StoreInfoPlugin = require("@walmart/store-info-plugin");`
-
-Add the plugin to the `plugins` property of the `electrode-server` configuration object:
+Then, add your plugin to the config `plugins` section.
 
 ```js
+{
   plugins: {
-    storeInfo: {
-      priority: 210,
-      register: StoreInfoPlugin 
+    "@walmart/store-info-plugin": {
+      priority: 210
     }
   }
+}
 ```
 
-If your plugin needs to be registered before other plugins, you can set `priority` to a lower value.
+Above config tells `electrode-server` to use the plugin's field name `@walmart/store-info-plugin` as the name of 
+the plugin's module to load for registration with Hapi.
 
-###Creating a new server-side route
+### Plugin configs
 
-This example steps through adding a path to be served from your application, with a theoretical API
-endpoint - `/api/numbers`
+   * `priority` - integer value to indicate the plugin's registration order
+      * lower value ones are register first
+      * Default to `Infinity` if this field is missing or has no valid integer value (`NaN`) (string of number accepted)
+   * `enable` - if set to `false` then this plugin won't be registered.
+   * plugin field name - generally use as the name of the plugin module to load for registration
 
-Your endpoints and other functionality should be created as Hapi plugins. This embraces the Hapi methodology
-and allows for logical modularization of your application.
+### Other plugin configs
 
-First, create a `plugins` directory under `server`. Each logical grouping of paths (that will be server-side
-rendered) should be their own plugin, so here we will create the `api` plugin:
+  If a plugin's field name is not desired as its module name, then you can optionally specify one of the following 
+  to provide the plugin's module for registration:
 
-`mkdir -p server/plugins/api`
+   * `register` - if specified, then treat as the plugin's `register` function to pass to Hapi
+   * `module` - if specified and `register` is not, then treat it as the name of the plugin module to load for registration.
 
-Next, we'll create the main entry point for the `api` plugin, `server/plugins/api/index.js` and add this content:
+## Support/Contact
 
-**ES6**
-```js
-const Api = (server, options, next) => {
+Dave Stevens <dstevens@walmartlabs.com> Slack: @dstevens
 
-  server.route({
-    path: "/api/numbers",
-    method: "GET",
-    handler: (request, reply) => {
-      return reply({ numbers: [1,2,3,4,5] });
-    }
-  });
+Joel Chen <xchen@walmartlabs.com> Slack: @joelchen
 
-  next();
-
-};
-
-Api.attributes = {
-  name: "exampleApi",
-  version: "1.0.0"
-};
-
-export default Api;
-```
-
-**ES5**
-```js
-var Api = function (server, options, next) {
-
-  server.route({
-    path: "/api/numbers",
-    method: "GET",
-    handler: function (request, reply) {
-      return reply({ numbers: [1,2,3,4,5] });
-    }
-  });
-
-  next();
-
-};
-
-Api.attributes = {
-  name: "exampleApi",
-  version: "1.0.0"
-};
-
-module.exports = Api;
-```
-
-Finally, we add our new plugin to our configuration file - first requiring
-or importing it:
-
-**ES6**
-
-`import Api from "../../server/plugins/api"; // path is relative to config/electrode-server/`
-
-**ES5**
-
-`var Api = require("../../server/plugins/api"); // path is relative to config/electrode-server/`
-
-And add it to the plugins array:
-
-```js
-  plugins: [
-    { register: Api }
-  ]
-```
-
-##Support/Contact
-
-Dave Stevens <dstevens@walmartlabs.com>
-
-Slack: @dstevens
-
-Also see Slack Channel `#react`
+Also see Slack Channel `#electrode` or `#react`
