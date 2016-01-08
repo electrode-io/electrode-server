@@ -45,6 +45,7 @@
   },
   "dependencies": {
     "@walmart/electrode-service-initializer": "^1.0.0",
+    "@walmart/electrode-cls-provider": "^0.0.1",
     "@walmart/service-registry-client": "^1.0.0",
     "bluebird": "^2",
     "chalk": "^1.1.1",
