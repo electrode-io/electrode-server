@@ -46,7 +46,7 @@
   "dependencies": {
     "@walmart/electrode-service-initializer": "^1.0.0",
     "@walmart/service-registry-client": "^1.0.0",
-    "bluebird": "^3.0.6",
+    "bluebird": "^2",
     "chalk": "^1.1.1",
     "config": "^1.17.1",
     "crumb": "^5.0.0",
