@@ -6,6 +6,8 @@ const _ = require("lodash");
 const request = require("superagent");
 const Promise = require("bluebird");
 
+const RegClient = require("@walmart/service-registry-client");
+
 describe("electrode-server", function () {
 
   const stopServer = (server) =>
@@ -115,7 +117,8 @@ describe("electrode-server", function () {
 
   it("should start up with a good @empty_config", function (done) {
     const verifyServices = (server) => {
-      chai.assert(server.app.services.registry, "registry service is not present in server.app");
+      chai.assert(server.app.services[RegClient.providerName],
+        "registry service is not present in server.app");
       return server;
     };
     electrodeServer("./test/data/empty-config.js")
