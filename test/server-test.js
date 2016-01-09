@@ -24,7 +24,8 @@ describe("electrode-server", function () {
     });
   });
 
-  const testSimplePromise = () => electrodeServer({}).then(verifyServer).then(stopServer);
+  const testSimplePromise = (config) =>
+    electrodeServer(config || {}).then(verifyServer).then(stopServer);
 
   const testSimpleCallback = () =>
     new Promise((resolve, reject) => {
@@ -34,7 +35,14 @@ describe("electrode-server", function () {
       .then(stopServer);
 
   it("should start up a default server twice", function (done) {
-    testSimplePromise().then(testSimplePromise).then(done).catch(done);
+    testSimplePromise({
+      electrode: {
+        hostname: "blah-test-923898234" // test bad hostname
+      }
+    })
+      .then(() => testSimplePromise())
+      .then(done)
+      .catch(done);
   });
 
   it("should start up a server twice @callbacks", function (done) {

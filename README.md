@@ -189,6 +189,37 @@ the plugin's module to load for registration with Hapi.
 
    * `register` - if specified, then treat as the plugin's `register` function to pass to Hapi
    * `module` - if specified and `register` is not, then treat it as the name of the plugin module to load for registration.
+      * If you absolutely do not want electrode server to try loading any module for this plugin, then set `module` to false.
+
+## hostname and IP
+
+`electrode-server` will add a `electrode` object to the config.
+
+Inside it will lookup the hostname with `os.hostname` and IP with `dns.lookup` and set them to:
+
+```js
+{
+  electrode: {
+    hostIP: "<ip>",
+    hostname: "<hostname>"
+  }
+}
+```
+
+## API
+
+The electrode server exports a single API.
+
+### [electrodeServer](#electrodeserver)
+
+`electrodeServer(config, [callback])`
+
+   * `config` is the [electrode server config](#configuration-options)
+   * Returns a promise resolving to the Hapi server
+   
+   * `callback` is an optional errback with the signature `function (err, server)`
+      * where `server` is the Hapi server
+      * If callback is provided then promise is _not_ returned.
 
 ## Support/Contact
 
