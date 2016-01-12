@@ -45,6 +45,7 @@
   },
   "dependencies": {
     "@walmart/electrode-cls-provider": "^1.0.0",
+    "@walmart/electrode-logging-plugin": "^1.0.2",
     "@walmart/electrode-service-initializer": "^1.0.0",
     "@walmart/service-registry-client": "^1.0.0",
     "@walmart/wl-soa-esb-bug-patch": "^1.0.3",
