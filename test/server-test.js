@@ -6,6 +6,8 @@ const _ = require("lodash");
 const request = require("superagent");
 const Promise = require("bluebird");
 
+const RegClient = require("@walmart/service-registry-client");
+
 describe("electrode-server", function () {
 
   const stopServer = (server) =>
@@ -13,6 +15,8 @@ describe("electrode-server", function () {
       server.stop((stopErr) => stopErr ? reject(stopErr) : resolve()));
 
   const verifyServer = (server) => new Promise((resolve) => {
+    chai.assert(server.settings.app.config, "server.settings.app.config not available");
+    chai.assert(server.app.config, "server.app.config not available");
     request.get("http://localhost:3000/html/test.html").end((err, resp) => {
       chai.assert.equal(err.message, "Not Found");
       chai.assert.equal(err.status, 404);
@@ -24,7 +28,8 @@ describe("electrode-server", function () {
     });
   });
 
-  const testSimplePromise = () => electrodeServer({}).then(verifyServer).then(stopServer);
+  const testSimplePromise = (config) =>
+    electrodeServer(config || {}).then(verifyServer).then(stopServer);
 
   const testSimpleCallback = () =>
     new Promise((resolve, reject) => {
@@ -34,7 +39,14 @@ describe("electrode-server", function () {
       .then(stopServer);
 
   it("should start up a default server twice", function (done) {
-    testSimplePromise().then(testSimplePromise).then(done).catch(done);
+    testSimplePromise({
+      electrode: {
+        hostname: "blah-test-923898234" // test bad hostname
+      }
+    })
+      .then(() => testSimplePromise())
+      .then(done)
+      .catch(done);
   });
 
   it("should start up a server twice @callbacks", function (done) {
@@ -107,7 +119,8 @@ describe("electrode-server", function () {
 
   it("should start up with a good @empty_config", function (done) {
     const verifyServices = (server) => {
-      chai.assert(server.app.services.registry, "registry service is not present in server.app");
+      chai.assert(server.app.services[RegClient.providerName],
+        "registry service is not present in server.app");
       return server;
     };
     electrodeServer("./test/data/empty-config.js")
