@@ -15,6 +15,8 @@ describe("electrode-server", function () {
       server.stop((stopErr) => stopErr ? reject(stopErr) : resolve()));
 
   const verifyServer = (server) => new Promise((resolve) => {
+    chai.assert(server.settings.app.config, "server.settings.app.config not available");
+    chai.assert(server.app.config, "server.app.config not available");
     request.get("http://localhost:3000/html/test.html").end((err, resp) => {
       chai.assert.equal(err.message, "Not Found");
       chai.assert.equal(err.status, 404);
