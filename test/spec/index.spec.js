@@ -1,6 +1,6 @@
 "use strict";
 
-const electrodeServer = require("..");
+const electrodeServer = require("../..");
 const chai = require("chai");
 const _ = require("lodash");
 const request = require("superagent");
@@ -8,22 +8,26 @@ const Promise = require("bluebird");
 
 const RegClient = require("@walmart/service-registry-client");
 
+const HTTP_404 = 404;
+
 describe("electrode-server", function () {
 
   const stopServer = (server) =>
     new Promise((resolve, reject) =>
-      server.stop((stopErr) => stopErr ? reject(stopErr) : resolve()));
+      server.stop((stopErr) => {
+        return stopErr ? reject(stopErr) : resolve();
+      }));
 
   const verifyServer = (server) => new Promise((resolve) => {
     chai.assert(server.settings.app.config, "server.settings.app.config not available");
     chai.assert(server.app.config, "server.app.config not available");
     request.get("http://localhost:3000/html/test.html").end((err, resp) => {
       chai.assert.equal(err.message, "Not Found");
-      chai.assert.equal(err.status, 404);
+      chai.assert.equal(err.status, HTTP_404);
       chai.assert.ok(resp, "No response from server");
       chai.assert.ok(resp.body, "Response has no body");
       chai.assert.equal(resp.body.error, "Not Found");
-      chai.assert.equal(resp.body.statusCode, 404);
+      chai.assert.equal(resp.body.statusCode, HTTP_404);
       resolve(server);
     });
   });
@@ -33,7 +37,9 @@ describe("electrode-server", function () {
 
   const testSimpleCallback = () =>
     new Promise((resolve, reject) => {
-      electrodeServer({}, (err, server) => err ? reject(err) : resolve(server));
+      electrodeServer({}, (err, server) => {
+        return err ? reject(err) : resolve(server);
+      });
     })
       .then(verifyServer)
       .then(stopServer);

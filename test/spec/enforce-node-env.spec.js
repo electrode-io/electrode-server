@@ -1,6 +1,6 @@
 "use strict";
 
-const enforceNodeEnv = require("../lib/enforce-node-env.js");
+const enforceNodeEnv = require("../../lib/enforce-node-env.js");
 const Chai = require("chai");
 
 describe("process-env-abbr", function () {

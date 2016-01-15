@@ -4,10 +4,7 @@
   "description": "A configurable Hapi web server",
   "main": "lib/index.js",
   "scripts": {
-    "lint": "eslint .",
-    "test": "mocha",
-    "coverage": "istanbul cover node_modules/.bin/_mocha",
-    "prepublish": "npm test"
+    "prepublish": "builder run test"
   },
   "repository": {
     "type": "git",
@@ -31,19 +28,19 @@
     },
     {
       "name": "Perolof Bondesson",
-      "email": ""
+      "email": "PBondesson@walmartlabs.com"
     },
     {
       "name": "Joel Chen",
       "email": "xchen@walmartlabs.com"
     }
   ],
-  "private": true,
   "license": "private",
   "engines": {
     "node": ">= 4.2.2"
   },
   "dependencies": {
+    "@walmart/electrode-archetype-hapi-plugin": "^1.1.0",
     "@walmart/electrode-cls-provider": "^1.0.2",
     "@walmart/electrode-logging-plugin": "^1.0.3",
     "@walmart/electrode-service-initializer": "^1.0.0",
@@ -60,11 +57,7 @@
     "superagent": "^1.6.1"
   },
   "devDependencies": {
-    "chai": "^3.4.1",
-    "eslint": "^1.10.3",
-    "eslint-config-defaults": "^7.1.1",
-    "eslint-plugin-filenames": "^0.2.0",
-    "istanbul": "^0.4.1",
-    "mocha": "^2.3.4"
+    "@walmart/electrode-archetype-hapi-plugin-dev": "^1.1.0",
+    "builder": "^2.4.0"
   }
 }
