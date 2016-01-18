@@ -1,0 +1,3 @@
+---
+extends:
+  - "./node_modules/@walmart/electrode-archetype-hapi-plugin/config/eslint/.eslintrc-node"
