@@ -4,7 +4,7 @@
   "description": "A configurable Hapi web server",
   "main": "lib/index.js",
   "scripts": {
-    "prepublish": "builder run test"
+    "prepublish": "if in-publish; then builder run test; else echo not in publish; fi"
   },
   "repository": {
     "type": "git",
@@ -52,6 +52,7 @@
     "crumb": "^5.0.0",
     "hapi": "^11.0.5",
     "hoek": "^3.0.1",
+    "in-publish": "^2.0.0",
     "inert": "^3.2.0",
     "lodash": "^3.10.1",
     "superagent": "^1.6.1"
