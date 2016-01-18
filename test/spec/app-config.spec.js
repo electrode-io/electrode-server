@@ -1,10 +1,11 @@
 "use strict";
 
-const appConfig = require("../lib/plugins/app-config.js");
+const appConfig = require("../../lib/plugins/app-config.js");
 const chai = require("chai");
 
 describe("app-config-plugin", function () {
-  this.timeout(50);
+  const timeout = 50;
+  this.timeout(timeout);
   it("should add config to req.app", function (done) {
     let extFn;
     const server = {
