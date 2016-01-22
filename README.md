@@ -106,6 +106,8 @@ below will be used).
       }
     }
     ```
+    
+  * Unless you have a reason to, please avoid specifying priority.  If you do, unless you have a reason otherwise, please use >= 200.
 
 ## Default plugins
 
