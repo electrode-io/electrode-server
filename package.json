@@ -40,7 +40,6 @@
     "node": ">= 4.2.2"
   },
   "dependencies": {
-    "@walmart/electrode-archetype-hapi-plugin": "^1.1.0",
     "@walmart/electrode-cls-provider": "^1.0.2",
     "@walmart/electrode-log-consumer": "^1.0.1",
     "@walmart/electrode-logging-plugin": "^1.0.3",
@@ -59,7 +58,7 @@
     "superagent": "^1.6.1"
   },
   "devDependencies": {
-    "@walmart/electrode-archetype-hapi-plugin-dev": "^1.1.0",
+    "@walmart/electrode-archetype-hapi-plugin-dev": "^2.0.0",
     "builder": "^2.4.0"
   }
 }
