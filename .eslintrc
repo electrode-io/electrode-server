@@ -1,12 +1,3 @@
-{
-  "extends": [
-    "defaults/configurations/walmart/es6-node"
-  ],
-  "ecmaFeatures": {
-    "modules": false
-  },
-  "rules": {
-    "func-style": [0, "declaration"],
-    "object-shorthand": 0
-  }
-}
+---
+extends:
+  - "./node_modules/@walmart/electrode-archetype-hapi-plugin-dev/config/eslint/.eslintrc-node"

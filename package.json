@@ -1,13 +1,10 @@
 {
   "name": "@walmart/electrode-server",
-  "version": "1.1.4",
+  "version": "1.2.4",
   "description": "A configurable Hapi web server",
   "main": "lib/index.js",
   "scripts": {
-    "lint": "eslint .",
-    "test": "mocha",
-    "coverage": "istanbul cover node_modules/.bin/_mocha",
-    "prepublish": "npm test"
+    "prepublish": "if in-publish; then builder run test; else echo not in publish; fi"
   },
   "repository": {
     "type": "git",
@@ -31,21 +28,21 @@
     },
     {
       "name": "Perolof Bondesson",
-      "email": ""
+      "email": "PBondesson@walmartlabs.com"
     },
     {
       "name": "Joel Chen",
       "email": "xchen@walmartlabs.com"
     }
   ],
-  "private": true,
   "license": "private",
   "engines": {
     "node": ">= 4.2.2"
   },
   "dependencies": {
-    "@walmart/electrode-cls-provider": "^1.0.0",
-    "@walmart/electrode-logging-plugin": "^1.0.2",
+    "@walmart/electrode-cls-provider": "^1.0.2",
+    "@walmart/electrode-log-consumer": "^1.0.1",
+    "@walmart/electrode-logging-plugin": "^1.0.3",
     "@walmart/electrode-service-initializer": "^1.0.0",
     "@walmart/service-registry-client": "^1.0.0",
     "@walmart/wl-soa-esb-bug-patch": "^1.0.3",
@@ -55,16 +52,13 @@
     "crumb": "^5.0.0",
     "hapi": "^11.0.5",
     "hoek": "^3.0.1",
+    "in-publish": "^2.0.0",
     "inert": "^3.2.0",
     "lodash": "^3.10.1",
     "superagent": "^1.6.1"
   },
   "devDependencies": {
-    "chai": "^3.4.1",
-    "eslint": "^1.10.3",
-    "eslint-config-defaults": "^7.1.1",
-    "eslint-plugin-filenames": "^0.2.0",
-    "istanbul": "^0.4.1",
-    "mocha": "^2.3.4"
+    "@walmart/electrode-archetype-hapi-plugin-dev": "^2.0.0",
+    "builder": "^2.4.0"
   }
 }
