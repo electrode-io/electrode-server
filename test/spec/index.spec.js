@@ -5,6 +5,8 @@ const chai = require("chai");
 const _ = require("lodash");
 const request = require("superagent");
 const Promise = require("bluebird");
+const startMitm = require("mitm");
+const interceptStdout = require("intercept-stdout");
 
 const RegClient = require("@walmart/service-registry-client");
 
@@ -219,4 +221,60 @@ describe("electrode-server", function () {
         }
       });
   });
+
+  it("should skip service initializer if it's not enabled", function (done) {
+    const mitm = startMitm();
+    mitm.on("request", (req, res) => {
+      if (req.url === "/electrode/services/discovery/refresh") {
+        throw new Error("not expecting request");
+      } else {
+        res.end("{}");
+      }
+    });
+    electrodeServer({
+      services: {
+        registryRefreshPath: ""
+      },
+      plugins: {
+        "@walmart/electrode-service-initializer": {enable: false}
+      }
+    })
+      .then(stopServer)
+      .then(() => done())
+      .catch(done)
+      .finally(() => {
+        mitm.disable();
+      });
+  });
+
+  it("should log service initializer error to console", function (done) {
+    let seen = "failure message not seen";
+    const msg = "failure tested";
+    const unhook = interceptStdout((txt) => {
+      if (_.contains(txt, msg)) {
+        seen = msg;
+      }
+    });
+    const mitm = startMitm();
+    mitm.on("request", (req, res) => {
+      if (req.url === "/electrode/services/discovery/refresh") {
+        res.statusCode = 400;
+        res.end(msg);
+      } else {
+        res.end("{}");
+      }
+    });
+    electrodeServer({})
+      .then(stopServer)
+      .then(() => {
+        expect(seen).to.equal(msg);
+      })
+      .then(() => done())
+      .catch(done)
+      .finally(() => {
+        mitm.disable();
+        unhook();
+      });
+  });
+
 });
