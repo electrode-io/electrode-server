@@ -9,9 +9,22 @@ The intention is that you will extend via configuration, such that this provides
 functionality of a Hapi web server with React rendering, and within your own application you
 will add on the features, logic, etc unique to your situation.
 
+
+## Why
+
+Why do we have electrode-server that's not a plugin, and apparently duplicating a core Hapi module [glue]?
+
+It's true that the part to start a Hapi server is similar to [glue] and fairly trivial.  It basically sets up a Hapi server, adds connections, and starts the server.
+
+The key feature electrode-server brings is composable plugins registration.
+
+Electrode platform brings many standard capabilities through Hapi plugins, and these are automatically provided by default.  You can choose to turn them off if you want.  With Hapi's plugins registration through an array, it's not very flexible because arrays are not easily composable.  
+
+Electrode server instead allow you to specify the plugins you want in an object, which is easily composable.  With an `enable` flag and a `priority` value, electrode server then can combine plugin registrations and turn them into an array sorted by priority, and then pass that to Hapi.
+
 ## Versioning
 
-This module require Node v4.x+.
+This module require Node v4.2.x+.
 
 ## Installing
 
@@ -19,15 +32,13 @@ This module require Node v4.x+.
 
 ## Usage
 
-Electrode Server comes with enough defaults such that you can spin up a Hapi server at
-`http://localhost:3000` with one call:
+Electrode Server comes with enough defaults such that you can spin up a Hapi server at `http://localhost:3000` with one call:
 
 ```js
 require("@walmart/electrode-server")();
 ```
 
 Of course that doesn't do much but getting a 404 response from `http://localhost:3000`, so see below for configuring it. 
-
 
 ## Configuration
 
@@ -41,16 +52,15 @@ require("@walmart/electrode-server")(config);
 It's recommended that you use a configuration management tool to control
 your configurations based on `NODE_ENV`.
 
-[node-config](https://github.com/lorenwest/node-config) is one such tool.  [see below for more details](#node-config)
+[node-config] is one such tool.  [see below for more details](#node-config)
 
 ## Configuration Options
 
 Here's what you can configure:
 
-All properties are optional (if not present, the default values shown
-below will be used).
+All properties are optional (if not present, the default values shown below will be used).
 
-* `server` (Object) Server options to pass to [Hapi's `Hapi.Server`](http://hapijs.com/api#new-serveroptions) 
+* `server` (Object) Server options to pass to [Hapi's `Hapi.Server`]
 
    * _default_
       * `server.app.config` is set to a object that's the combination of your config with `electrode-server's` defaults applied.
@@ -83,7 +93,7 @@ below will be used).
     }
     ```
 
-* `plugins` (Object) plugin registration objects, converted to an array of its values and passed to [Hapi's server.register](http://hapijs.com/api#serverregisterplugins-options-callback)
+* `plugins` (Object) plugin registration objects, converted to an array of its values and passed to [Hapi's `server.register`]
 
    * _default_
 
@@ -113,9 +123,9 @@ below will be used).
 
 `electrode-server` registers a few plugins by default.
 
-`csrf` is using [Hapi crumb plugin](https://github.com/hapijs/crumb) to provide CSRF support.
+`csrf` is using [Hapi crumb plugin] to provide CSRF support.
 
-`inert` is using [Hapi inert plugin](https://github.com/hapijs/inert) to handle static files.
+`inert` is using [Hapi inert plugin] to handle static files.
 
 These two are `electrode-server's` internal plugins: 
 
@@ -135,17 +145,15 @@ the `csrf` plugin, in your config, do:
 }
 ```
 
+> Please refer to the code for [latest default plugins](lib/config/default.js#L39).
+
 ## node-config
 
-To keep your environment specific configurations manageable, you should use
-a tool like [node-config](https://github.com/lorenwest/node-config).
+To keep your environment specific configurations manageable, you should use a tool like [node-config].
 
-It supports many different formats for your config files, from different 
-flavors of JSON to Yaml to a full blown JavaScript file, it's up to you.
+It supports many different formats for your config files, from different flavors of JSON to Yaml to a full blown JavaScript file, it's up to you.
 
-Once you have your config files setup like 
-[node-config recommended](https://github.com/lorenwest/node-config/wiki/Configuration-Files#config-directory), 
-you can simply pass node-config to electrode-server:
+Once you have your config files setup like [node-config recommended config setup], you can simply pass node-config to electrode-server:
 
 ```js
 const config = require("config");
@@ -230,3 +238,12 @@ Dave Stevens <dstevens@walmartlabs.com> Slack: @dstevens
 Joel Chen <xchen@walmartlabs.com> Slack: @joelchen
 
 Also see Slack Channel `#electrode` or `#react`
+
+[glue]: https://github.com/hapijs/glue
+[node-config]: https://github.com/lorenwest/node-config
+[Hapi crumb plugin]: https://github.com/hapijs/crumb
+[Hapi's `Hapi.Server`]: http://hapijs.com/api#new-serveroptions 
+[Hapi's `server.register`]: http://hapijs.com/api#serverregisterplugins-options-callback
+[Hapi inert plugin]: https://github.com/hapijs/inert
+[node-config recommended config setup]: https://github.com/lorenwest/node-config/wiki/Configuration-Files#config-directory 
+[Hapi inert plugin]: https://github.com/hapijs/inert
