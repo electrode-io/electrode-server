@@ -50,6 +50,7 @@
     "@walmart/wl-soa-esb-bug-patch": "^1.0.3",
     "bluebird": "^2",
     "chalk": "^1.1.1",
+    "config": "^1.19.0",
     "crumb": "^5.0.0",
     "hapi": "^11.0.5",
     "hoek": "^3.0.4",
