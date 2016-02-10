@@ -37,7 +37,7 @@
       "email": "xchen@walmartlabs.com"
     }
   ],
-  "license": "private",
+  "license": "UNLICENSED",
   "engines": {
     "node": ">= 4.2.2"
   },
@@ -50,10 +50,9 @@
     "@walmart/wl-soa-esb-bug-patch": "^1.0.3",
     "bluebird": "^2",
     "chalk": "^1.1.1",
-    "config": "^1.17.1",
     "crumb": "^5.0.0",
     "hapi": "^11.0.5",
-    "hoek": "^3.0.1",
+    "hoek": "^3.0.4",
     "in-publish": "^2.0.0",
     "inert": "^3.2.0",
     "lodash": "^3.10.1",
