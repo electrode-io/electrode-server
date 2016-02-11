@@ -284,7 +284,7 @@ describe("electrode-server", function () {
         assert.equal(server.app.config.logging.logMode, "development");
         return stopServer(server);
       })
-     .then(done);
+      .then(done);
   });
 
   it("should load config based on environment", (done) => {
@@ -315,9 +315,9 @@ describe("electrode-server", function () {
       .then(done);
   });
 
-  it("should get ccm configs after server start", (done) => {
-    process.env.NODE_ENV = "development";
-    electrodeServer({
+  describe("test ccm", function () {
+
+    const config = {
       services: {
         privateKey: {
           pemKey: "6KASDKKA-6JJS-6583-H435-8935JSDK4924"
@@ -334,28 +334,57 @@ describe("electrode-server", function () {
         }
       },
       ccm: {
-        interval: 10000,
-        options: [
-          {
+        interval: 300,
+        options: []
+      }
+    };
+    process.env.NODE_ENV = "development";
+
+    const fs = require("fs");
+    const dir = `${process.cwd()}/.ccm`;
+    const file = `${dir}/snapshot.json`;
+
+    it("should get ccm configs after server start", (done) => {
+      electrodeServer(config)
+        .then((server) => {
+          assert(server.app.ccm);
+          server.app.config.ccm.options.push({
             serviceName: "atlas-checkout",
             configName: "guest-checkout"
-          }
-        ]
-      }
-    })
-      .then((server) => {
-        assert(server.app.ccm.enable_guest);
-        assert(server.app.ccm.enable_guest_email);
-        stopServer(server);
+          });
+          return new Promise((resolve) => {
+            setTimeout(() => {
+              assert(server.app.ccm.enable_guest);
+              assert(server.app.ccm.enable_guest_email);
+              resolve();
+            }, 600);
+          }).then(() => {
+            stopServer(server);
 
-        const fs = require("fs");
-        const dir = `${process.cwd()}/.ccm`;
-        const file = `${dir}/snapshot.json`;
-        fs.unlink(file, () => {
-          fs.rmdir(dir);
+            fs.unlink(file, () => {
+              fs.rmdir(dir);
+            });
+          })
+          .then(done)
+          .catch(done);
         });
-      })
-      .then(done);
+    });
+
+    it("should have a default interval", (done) => {
+      delete config.ccm.interval;
+      electrodeServer(config)
+        .then((server) => {
+          assert(server.app.ccm);
+
+          stopServer(server);
+
+          fs.unlink(file, () => {
+            fs.rmdir(dir);
+          });
+        })
+        .then(done)
+        .catch(done);
+    });
   });
 
 });
