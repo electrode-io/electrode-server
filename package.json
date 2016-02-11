@@ -42,6 +42,7 @@
     "node": ">= 4.2.2"
   },
   "dependencies": {
+    "@walmart/electrode-ccm-initializer": "^1.0.2",
     "@walmart/electrode-cls-provider": "^1.0.2",
     "@walmart/electrode-log-consumer": "^1.0.1",
     "@walmart/electrode-logging-plugin": "^1.0.3",
