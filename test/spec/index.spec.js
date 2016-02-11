@@ -277,4 +277,43 @@ describe("electrode-server", function () {
       });
   });
 
+  it("should load default config when no environment specified", (done) => {
+    electrodeServer({})
+      .then((server) => {
+
+        chai.assert.equal(server.app.config.logging.logMode, "development");
+        return stopServer(server);
+      })
+     .then(done);
+  });
+
+  it("should load config based on environment", (done) => {
+    const oldEnv = process.env.NODE_ENV;
+    process.env.NODE_ENV = "production";
+
+    electrodeServer({})
+      .then((server) => {
+        chai.assert.equal(server.app.config.logging.logMode, "production");
+        process.env.NODE_ENV = oldEnv;
+
+        return stopServer(server);
+      })
+      .then(done);
+  });
+
+
+  it("should skip env config that doesn't exist", (done) => {
+    const oldEnv = process.env.NODE_ENV;
+    process.env.NODE_ENV = "development";
+
+    electrodeServer({})
+      .then((server) => {
+        chai.assert.equal(server.app.config.logging.logMode, "development");
+        process.env.NODE_ENV = oldEnv;
+
+        return stopServer(server);
+      })
+      .then(done);
+  });
+
 });
