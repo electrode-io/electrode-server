@@ -1,7 +1,7 @@
 "use strict";
 
 const electrodeServer = require("../..");
-const chai = require("chai");
+const assert = require("chai").assert;
 const _ = require("lodash");
 const request = require("superagent");
 const Promise = require("bluebird");
@@ -21,15 +21,15 @@ describe("electrode-server", function () {
       }));
 
   const verifyServer = (server) => new Promise((resolve) => {
-    chai.assert(server.settings.app.config, "server.settings.app.config not available");
-    chai.assert(server.app.config, "server.app.config not available");
+    assert(server.settings.app.config, "server.settings.app.config not available");
+    assert(server.app.config, "server.app.config not available");
     request.get("http://localhost:3000/html/test.html").end((err, resp) => {
-      chai.assert.equal(err.message, "Not Found");
-      chai.assert.equal(err.status, HTTP_404);
-      chai.assert.ok(resp, "No response from server");
-      chai.assert.ok(resp.body, "Response has no body");
-      chai.assert.equal(resp.body.error, "Not Found");
-      chai.assert.equal(resp.body.statusCode, HTTP_404);
+      assert.equal(err.message, "Not Found");
+      assert.equal(err.status, HTTP_404);
+      assert.ok(resp, "No response from server");
+      assert.ok(resp.body, "Response has no body");
+      assert.equal(resp.body.error, "Not Found");
+      assert.equal(resp.body.statusCode, HTTP_404);
       resolve(server);
     });
   });
@@ -62,7 +62,7 @@ describe("electrode-server", function () {
   });
 
   const expectedError = () => {
-    chai.assert(false, "expected error from tested code");
+    assert(false, "expected error from tested code");
   };
 
   it("should fail for @missing_config", function (done) {
@@ -127,7 +127,7 @@ describe("electrode-server", function () {
 
   it("should start up with a good @empty_config", function (done) {
     const verifyServices = (server) => {
-      chai.assert(server.app.services[RegClient.providerName],
+      assert(server.app.services[RegClient.providerName],
         "registry service is not present in server.app");
       return server;
     };
@@ -149,8 +149,8 @@ describe("electrode-server", function () {
 
   it("should start up with @correct_plugins_priority", function (done) {
     const verify = (server) => {
-      chai.assert.ok(server.plugins.testPlugin, "testPlugin missing in server");
-      chai.assert.ok(server.plugins.es6StylePlugin, "es6StylePlugin missing in server");
+      assert.ok(server.plugins.testPlugin, "testPlugin missing in server");
+      assert.ok(server.plugins.es6StylePlugin, "es6StylePlugin missing in server");
       return server;
     };
     electrodeServer("./test/data/server.js")
@@ -163,8 +163,8 @@ describe("electrode-server", function () {
   it("should return static file", function (done) {
     const verifyServerStatic = (server) => new Promise((resolve) => {
       request.get("http://localhost:3000/html/hello.html").end((err, resp) => {
-        chai.assert(resp, "Server didn't return response");
-        chai.assert(_.contains(resp.text, "Hello Test!"),
+        assert(resp, "Server didn't return response");
+        assert(_.contains(resp.text, "Hello Test!"),
           "response not contain expected string");
         resolve(server);
       });
@@ -281,7 +281,7 @@ describe("electrode-server", function () {
     electrodeServer({})
       .then((server) => {
 
-        chai.assert.equal(server.app.config.logging.logMode, "development");
+        assert.equal(server.app.config.logging.logMode, "development");
         return stopServer(server);
       })
      .then(done);
@@ -293,7 +293,7 @@ describe("electrode-server", function () {
 
     electrodeServer({})
       .then((server) => {
-        chai.assert.equal(server.app.config.logging.logMode, "production");
+        assert.equal(server.app.config.logging.logMode, "production");
         process.env.NODE_ENV = oldEnv;
 
         return stopServer(server);
@@ -301,17 +301,59 @@ describe("electrode-server", function () {
       .then(done);
   });
 
-
   it("should skip env config that doesn't exist", (done) => {
     const oldEnv = process.env.NODE_ENV;
     process.env.NODE_ENV = "development";
 
     electrodeServer({})
       .then((server) => {
-        chai.assert.equal(server.app.config.logging.logMode, "development");
+        assert.equal(server.app.config.logging.logMode, "development");
         process.env.NODE_ENV = oldEnv;
 
         return stopServer(server);
+      })
+      .then(done);
+  });
+
+  it("should get ccm configs after server start", (done) => {
+    process.env.NODE_ENV = "development";
+    electrodeServer({
+      services: {
+        privateKey: {
+          pemKey: "6KASDKKA-6JJS-6583-H435-8935JSDK4924"
+        },
+        providers: {
+          "@walmart/electrode-ccm-client": {
+            "options": {
+              artifactId: "qa-service",
+              cloudEnvironment: "qa",
+              cloudDc: "qa",
+              environment: "qa"
+            }
+          }
+        }
+      },
+      ccm: {
+        interval: 10000,
+        options: [
+          {
+            serviceName: "atlas-checkout",
+            configName: "guest-checkout"
+          }
+        ]
+      }
+    })
+      .then((server) => {
+        assert(server.app.ccm.enable_guest);
+        assert(server.app.ccm.enable_guest_email);
+        stopServer(server);
+
+        const fs = require("fs");
+        const dir = `${process.cwd()}/.ccm`;
+        const file = `${dir}/snapshot.json`;
+        fs.unlink(file, () => {
+          fs.rmdir(dir);
+        });
       })
       .then(done);
   });

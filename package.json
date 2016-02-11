@@ -62,6 +62,7 @@
   },
   "devDependencies": {
     "@walmart/electrode-archetype-hapi-plugin-dev": "^2.0.0",
+    "@walmart/electrode-ccm-client": "^1.0.7",
     "builder": "^2.4.0",
     "intercept-stdout": "^0.1.2",
     "mitm": "^1.2.0"
