@@ -338,9 +338,7 @@ describe("electrode-server", function () {
 
     const config = {
       services: {
-        privateKey: {
-          pemKey: "6KASDKKA-6JJS-6583-H435-8935JSDK4924"
-        },
+        privateKey: {},
         providers: {
           "@walmart/electrode-ccm-client": {
             "options": {
