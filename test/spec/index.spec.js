@@ -14,6 +14,8 @@ const HTTP_404 = 404;
 
 describe("electrode-server", function () {
 
+  this.timeout(10000);
+
   const stopServer = (server) =>
     new Promise((resolve, reject) =>
       server.stop((stopErr) => {
@@ -191,7 +193,7 @@ describe("electrode-server", function () {
     electrodeServer("./test/data/plugin-err.js")
       .then(expectedError)
       .catch((e) => {
-        if (e._err === "plugin_failure") {
+        if (e._err.message === "plugin_failure") {
           return done();
         }
         done(e);
@@ -277,6 +279,25 @@ describe("electrode-server", function () {
       });
   });
 
+  it("should fail with plugins register timeout", (done) => {
+    const register = () => {
+    };
+    register.attributes = {name: "timeout"};
+    electrodeServer({
+      plugins: {
+        test: {
+          register
+        }
+      }
+    })
+      .then(expectedError)
+      .catch((e) => {
+        expect(e._err.message).to.include("Electrode Server register plugins timeout.  Did you forget next");
+        done();
+      })
+      .catch(done);
+  });
+
   it("should load default config when no environment specified", (done) => {
     electrodeServer({})
       .then((server) => {
@@ -288,13 +309,12 @@ describe("electrode-server", function () {
   });
 
   it("should load config based on environment", (done) => {
-    const oldEnv = process.env.NODE_ENV;
     process.env.NODE_ENV = "production";
 
     electrodeServer({})
       .then((server) => {
         assert.equal(server.app.config.logging.logMode, "production");
-        process.env.NODE_ENV = oldEnv;
+        process.env.NODE_ENV = "test";
 
         return stopServer(server);
       })
@@ -302,13 +322,12 @@ describe("electrode-server", function () {
   });
 
   it("should skip env config that doesn't exist", (done) => {
-    const oldEnv = process.env.NODE_ENV;
     process.env.NODE_ENV = "development";
 
     electrodeServer({})
       .then((server) => {
         assert.equal(server.app.config.logging.logMode, "development");
-        process.env.NODE_ENV = oldEnv;
+        process.env.NODE_ENV = "test";
 
         return stopServer(server);
       })
