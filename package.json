@@ -48,6 +48,7 @@
     "@walmart/electrode-logging-plugin": "^1.0.3",
     "@walmart/electrode-service-initializer": "^1.0.0",
     "@walmart/service-registry-client": "^1.0.0",
+    "@walmart/try-catch": "^1.0.0",
     "@walmart/wl-soa-esb-bug-patch": "^1.0.3",
     "bluebird": "^2",
     "chalk": "^1.1.1",
