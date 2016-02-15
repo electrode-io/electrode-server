@@ -352,7 +352,7 @@ describe("electrode-server", function () {
       },
       ccm: {
         interval: 300,
-        options: []
+        keys: []
       }
     };
     process.env.NODE_ENV = "development";
@@ -365,14 +365,14 @@ describe("electrode-server", function () {
       electrodeServer(config)
         .then((server) => {
           assert(server.app.ccm);
-          server.app.config.ccm.options.push({
+          server.app.config.ccm.keys.push({
             serviceName: "atlas-checkout",
             configName: "guest-checkout"
           });
           return new Promise((resolve) => {
             setTimeout(() => {
-              assert(server.app.ccm.enable_guest);
-              assert(server.app.ccm.enable_guest_email);
+              assert(server.app.ccm["atlas-checkout"]["guest-checkout"]);
+              assert(server.app.ccm["atlas-checkout"]["guest-checkout"].enable_guest_email);
               resolve();
             }, 600);
           }).then(() => {
