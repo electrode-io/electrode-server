@@ -375,15 +375,17 @@ describe("electrode-server", function () {
               assert(server.app.ccm["atlas-checkout"]["guest-checkout"].enable_guest_email);
               resolve();
             }, 600);
-          }).then(() => {
-            stopServer(server);
-
-            fs.unlink(file, () => {
-              fs.rmdir(dir);
-            });
           })
-          .then(done)
-          .catch(done);
+            .then(() => {
+              stopServer(server);
+            })
+            .then(done)
+            .catch(done)
+            .finally(() => {
+              fs.unlink(file, () => {
+                fs.rmdir(dir);
+              });
+            });
         });
     });
 
@@ -394,13 +396,14 @@ describe("electrode-server", function () {
           assert(server.app.ccm);
 
           stopServer(server);
-
+        })
+        .then(done)
+        .catch(done)
+        .finally(() => {
           fs.unlink(file, () => {
             fs.rmdir(dir);
           });
-        })
-        .then(done)
-        .catch(done);
+        });
     });
   });
 
