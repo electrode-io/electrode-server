@@ -370,12 +370,20 @@ describe("electrode-server", function () {
             configName: "guest-checkout"
           });
           return new Promise((resolve) => {
-            setTimeout(() => {
-              assert(server.app.ccm["atlas-checkout"]["guest-checkout"]);
-              assert(server.app.ccm["atlas-checkout"]["guest-checkout"].enable_guest_email);
-              resolve();
-            }, 600);
+            const check = () => {
+              const x = server.app.ccm["atlas-checkout"];
+              if (x && x["guest-checkout"] && x["guest-checkout"].enable_guest_email) {
+                resolve();
+              } else {
+                setTimeout(check, 100);
+              }
+            };
+            setTimeout(check, 100);
           })
+            .timeout(5000)
+            .catch(Promise.TimeoutError, () => {
+              throw new Error("CCM was not refreshed before timeout");
+            })
             .then(() => {
               stopServer(server);
             })
