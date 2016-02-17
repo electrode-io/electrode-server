@@ -44,15 +44,28 @@ Of course that doesn't do much but getting a 404 response from `http://localhost
 
 You can pass in a config object that controls every aspect of the Hapi server.
 
+For example, if you want to spin up a minimal electrode-server without the service and ccm capabilities:
+
 ```js
-const config = {};
+const config = {
+  services: {
+    autoDiscovery: false
+  },
+  plugins: {
+    "@walmart/electrode-service-initializer": {
+      enable: false
+    },
+    "@walmart/electrode-ccm-initializer": {
+      enable: false
+    }
+  }
+};
 require("@walmart/electrode-server")(config);
 ```
 
-It's recommended that you use a configuration management tool to control
-your configurations based on `NODE_ENV`.
+However, for a more complex application, it's recommended that you use [electrode-config] to manage your app configuration.
 
-[node-config] is one such tool.  [see below for more details](#node-config)
+[see below for more details](#electrode-config)
 
 ## Configuration Options
 
@@ -147,16 +160,15 @@ the `csrf` plugin, in your config, do:
 
 > Please refer to the code for [latest default plugins](lib/config/default.js#L39).
 
-## node-config
+## electrode-config
 
-To keep your environment specific configurations manageable, you should use a tool like [node-config].
+To keep your environment specific configurations manageable, please use [electrode-config].
 
-It supports many different formats for your config files, from different flavors of JSON to Yaml to a full blown JavaScript file, it's up to you.
-
-Once you have your config files setup like [node-config recommended config setup], you can simply pass node-config to electrode-server:
+Once you have your config files setup according to the [configuration files setup], you can simply pass the config object to electrode server.
 
 ```js
-const config = require("config");
+const config = require("@walmart/electrode-config").config;
+
 require("@walmart/electrode-server")(config);
 ```
 
@@ -191,6 +203,10 @@ the plugin's module to load for registration with Hapi.
       * Default to `Infinity` if this field is missing or has no valid integer value (`NaN`) (string of number accepted)
    * `enable` - if set to `false` then this plugin won't be registered.
    * plugin field name - generally use as the name of the plugin module to load for registration
+
+#### About Priority
+
+A note about priority: If you are wondering what value to set for priority, the most likely answer is you **should not** set it.
 
 ### Other plugin configs
 
@@ -240,10 +256,10 @@ Joel Chen <xchen@walmartlabs.com> Slack: @joelchen
 Also see Slack Channel `#electrode` or `#react`
 
 [glue]: https://github.com/hapijs/glue
-[node-config]: https://github.com/lorenwest/node-config
+[electrode-config]: https://gecgithub01.walmart.com/electrode/electrode-config
 [Hapi crumb plugin]: https://github.com/hapijs/crumb
 [Hapi's `Hapi.Server`]: http://hapijs.com/api#new-serveroptions 
 [Hapi's `server.register`]: http://hapijs.com/api#serverregisterplugins-options-callback
 [Hapi inert plugin]: https://github.com/hapijs/inert
-[node-config recommended config setup]: https://github.com/lorenwest/node-config/wiki/Configuration-Files#config-directory 
+[configuration files setup]: https://gecgithub01.walmart.com/electrode/electrode-config#configuration-files
 [Hapi inert plugin]: https://github.com/hapijs/inert
