@@ -351,7 +351,8 @@ describe("electrode-server", function () {
         }
       },
       ccm: {
-        interval: 300,
+        autoLoad: true,
+        interval: 0.3,
         keys: []
       }
     };
@@ -360,6 +361,12 @@ describe("electrode-server", function () {
     const fs = require("fs");
     const dir = `${process.cwd()}/.ccm`;
     const file = `${dir}/snapshot.json`;
+
+    const cleanTmp = () => {
+      fs.unlink(file, () => {
+        fs.rmdir(dir);
+      });
+    };
 
     it("should get ccm configs after server start", (done) => {
       electrodeServer(config)
@@ -372,7 +379,8 @@ describe("electrode-server", function () {
           return new Promise((resolve) => {
             const check = () => {
               const x = server.app.ccm["atlas-checkout"];
-              if (x && x["guest-checkout"] && x["guest-checkout"].enable_guest_email) {
+              const g = x && x["guest-checkout"];
+              if (g && g.enable_guest_email) {
                 resolve();
               } else {
                 setTimeout(check, 100);
@@ -389,29 +397,35 @@ describe("electrode-server", function () {
             })
             .then(done)
             .catch(done)
-            .finally(() => {
-              fs.unlink(file, () => {
-                fs.rmdir(dir);
-              });
-            });
+            .finally(cleanTmp);
         });
     });
 
     it("should have a default interval", (done) => {
-      delete config.ccm.interval;
-      electrodeServer(config)
+      const cfg = _.cloneDeep(config);
+      cfg.ccm.interval = 0;
+      electrodeServer(cfg)
         .then((server) => {
-          assert(server.app.ccm);
-
+          assert(server.app.ccm, "ccm not loaded");
+          assert(server.app.refreshers.ccm.interval > 0, "ccm refresh interval not > 0");
           stopServer(server);
         })
         .then(done)
         .catch(done)
-        .finally(() => {
-          fs.unlink(file, () => {
-            fs.rmdir(dir);
-          });
-        });
+        .finally(cleanTmp);
+    });
+
+    it("should not load CCM if autoLoad is not set true", (done) => {
+      const cfg = _.cloneDeep(config);
+      delete cfg.ccm.autoLoad;
+      electrodeServer(cfg)
+        .then((server) => {
+          assert(!server.app.ccm, "ccm should not be loaded");
+
+          stopServer(server);
+        })
+        .then(done)
+        .catch(done);
     });
   });
 
