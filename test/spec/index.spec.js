@@ -164,12 +164,14 @@ describe("electrode-server", function () {
 
   it("should return static file", function (done) {
     const verifyServerStatic = (server) => new Promise((resolve) => {
-      request.get("http://localhost:3000/html/hello.html").end((err, resp) => {
-        assert(resp, "Server didn't return response");
-        assert(_.contains(resp.text, "Hello Test!"),
-          "response not contain expected string");
-        resolve(server);
-      });
+      request.get("http://localhost:3000/html/hello.html")
+        .set("Cookie", "a=b;;c=0") // should ignore cookie parsing errors
+        .end((err, resp) => {
+          assert(resp, "Server didn't return response");
+          assert(_.contains(resp.text, "Hello Test!"),
+            "response not contain expected string");
+          resolve(server);
+        });
     });
 
     const config = {
