@@ -20,6 +20,7 @@ describe("app-config-plugin", function () {
       }
     };
     const request = {
+      headers: {},
       app: {}
     };
     let continued = false;

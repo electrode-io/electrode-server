@@ -165,7 +165,7 @@ describe("electrode-server", function () {
   it("should return static file", function (done) {
     const verifyServerStatic = (server) => new Promise((resolve) => {
       request.get("http://localhost:3000/html/hello.html")
-        .set("Cookie", "a=b;;c=0") // should ignore cookie parsing errors
+        .set("Cookie", `a=1;; b=123;;c=4;e=;f=" 12345"`) // should ignore cookie parsing errors
         .end((err, resp) => {
           assert(resp, "Server didn't return response");
           assert(_.contains(resp.text, "Hello Test!"),
@@ -240,7 +240,8 @@ describe("electrode-server", function () {
         registryRefreshPath: ""
       },
       plugins: {
-        "@walmart/electrode-service-initializer": {enable: false}
+        "@walmart/electrode-service-initializer": {enable: false},
+        "@walmart/electrode-ccm-initializer": {enable: false}
       }
     })
       .then(stopServer)
