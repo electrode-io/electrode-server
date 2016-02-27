@@ -374,7 +374,7 @@ describe("electrode-server", function () {
     it("should get ccm configs after server start", (done) => {
       electrodeServer(config)
         .then((server) => {
-          assert(server.app.ccm);
+          assert(server.app.ccm._lastRefreshed);
           server.app.config.ccm.keys.push({
             serviceName: "atlas-checkout",
             configName: "guest-checkout"
@@ -409,7 +409,7 @@ describe("electrode-server", function () {
       cfg.ccm.interval = 0;
       electrodeServer(cfg)
         .then((server) => {
-          assert(server.app.ccm, "ccm not loaded");
+          assert(server.app.ccm._lastRefreshed, "ccm not loaded");
           assert(server.app.refreshers.ccm.interval > 0, "ccm refresh interval not > 0");
           stopServer(server);
         })
@@ -423,7 +423,7 @@ describe("electrode-server", function () {
       delete cfg.ccm.autoLoad;
       electrodeServer(cfg)
         .then((server) => {
-          assert(!server.app.ccm, "ccm should not be loaded");
+          assert(!server.app.ccm._lastRefreshed, "ccm should not be loaded");
 
           stopServer(server);
         })
