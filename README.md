@@ -12,15 +12,9 @@ will add on the features, logic, etc unique to your situation.
 
 ## Why
 
-Why do we have electrode-server that's not a plugin, and apparently duplicating a core Hapi module [glue]?
+Electrode Platform provides standard capabilities such as support for WML services like CCM, IAM, and logging.  Electrode Server acts as a blueprint of the Electrode platform and orchestrate the capabilities provided through Hapi plugins.  These are automatically provided by default but you can choose to turn them off if you want.  
 
-It's true that the part to start a Hapi server is similar to [glue] and fairly trivial.  It basically sets up a Hapi server, adds connections, and starts the server.
-
-The key feature electrode-server brings is composable plugins registration.
-
-Electrode platform brings many standard capabilities through Hapi plugins, and these are automatically provided by default.  You can choose to turn them off if you want.  With Hapi's plugins registration through an array, it's not very flexible because arrays are not easily composable.  
-
-Electrode server instead allow you to specify the plugins you want in an object, which is easily composable.  With an `enable` flag and a `priority` value, electrode server then can combine plugin registrations and turn them into an array sorted by priority, and then pass that to Hapi.
+To make this a bit more flexible, electrode server allows you to specify plugins with an `enable` flag and a `priority` value, electrode server then can combine plugin registrations and turn them into an array sorted by priority, and then pass that to Hapi.
 
 ## Versioning
 
