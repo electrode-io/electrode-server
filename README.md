@@ -35,7 +35,7 @@ This module require Node v4.2.x+.
 Electrode Server comes with enough defaults such that you can spin up a Hapi server at `http://localhost:3000` with one call:
 
 ```js
-require("@walmart/electrode-server")({});
+require("@walmart/electrode-server")();
 ```
 
 Of course that doesn't do much but getting a 404 response from `http://localhost:3000`, so see below for configuring it. 
