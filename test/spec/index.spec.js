@@ -77,7 +77,7 @@ describe("electrode-server", function () {
         electrodeServer()
           .then(expectedError)
           .catch((err) => {
-            if (_.contains(err.message, "is already in use")) {
+            if (_.includes(err.message, "is already in use")) {
               return stopServer(server);
             }
             done(err);
@@ -118,7 +118,7 @@ describe("electrode-server", function () {
         .set("Cookie", `a=1;; b=123;;c=4;e=;f=" 12345"`) // should ignore cookie parsing errors
         .end((err, resp) => {
           assert(resp, "Server didn't return response");
-          assert(_.contains(resp.text, "Hello Test!"),
+          assert(_.includes(resp.text, "Hello Test!"),
             "response not contain expected string");
           resolve(server);
         });
@@ -157,7 +157,7 @@ describe("electrode-server", function () {
     electrodeServer(require("../data/bad-plugin.js"))
       .then(expectedError)
       .catch((e) => {
-        if (_.contains(e._err.message, "Failed loading module ./test/plugins/err-plugin")) {
+        if (_.includes(e._err.message, "Failed loading module ./test/plugins/err-plugin")) {
           return done();
         }
         done(e);
@@ -168,7 +168,7 @@ describe("electrode-server", function () {
     electrodeServer(require("../data/dup-plugin.js"))
       .then(expectedError)
       .catch((e) => {
-        if (_.contains(e.message, "error starting the Hapi.js server")) {
+        if (_.includes(e.message, "error starting the Hapi.js server")) {
           done();
         } else {
           done(e);
@@ -206,7 +206,7 @@ describe("electrode-server", function () {
     let seen = "failure message not seen";
     const msg = "failure tested";
     const unhook = interceptStdout((txt) => {
-      if (_.contains(txt, msg)) {
+      if (_.includes(txt, msg)) {
         seen = msg;
       }
     });
@@ -306,7 +306,7 @@ describe("electrode-server", function () {
       ccm: {
         autoLoad: true,
         interval: 0.3,
-        keys: []
+        keys: {}
       }
     };
     process.env.NODE_ENV = "development";
@@ -325,14 +325,21 @@ describe("electrode-server", function () {
       electrodeServer(config)
         .then((server) => {
           assert(server.app.ccm._lastRefreshed);
-          server.app.config.ccm.keys.push({
-            serviceName: "atlas-checkout",
-            configName: "guest-checkout"
-          });
+          server.app.config.ccm.keys.root = {
+            "data": {
+              "atlasXO": {
+                "serviceName": "atlas-checkout",
+                "+configNames": [
+                  "guest-checkout",
+                  "responsive-config",
+                  "opinion-lab"
+                ]
+              }
+            }
+          };
           return new Promise((resolve) => {
             const check = () => {
-              const x = server.app.ccm["atlas-checkout"];
-              const g = x && x["guest-checkout"];
+              const g = server.app.ccm.atlasXO;
               if (g && g.enable_guest_email) {
                 resolve();
               } else {
