@@ -34,10 +34,14 @@ describe("electrode-server", function () {
       assert.equal(resp.body.statusCode, HTTP_404);
       resolve(server);
     });
-  });
+  })
+    .catch((err) => {
+      stopServer(server);
+      throw err;
+    });
 
   const testSimplePromise = (config) =>
-    electrodeServer(config || {}).then(verifyServer).then(stopServer);
+    electrodeServer(config).then(verifyServer).then(stopServer);
 
   const testSimpleCallback = () =>
     new Promise((resolve, reject) => {
@@ -67,34 +71,13 @@ describe("electrode-server", function () {
     assert(false, "expected error from tested code");
   };
 
-  it("should fail for @missing_config", function (done) {
-    electrodeServer("test/test/test1.js")
-      .then(expectedError)
-      .catch((e) => {
-        if (_.contains(e.message, "Missing config file")) {
-          return done();
-        }
-        done(e);
-      });
-  });
-
-
-  it("should fail for @missing_config @callbacks", function (done) {
-    electrodeServer("test/test/test2.js", (err) => {
-      if (!err) {
-        expectedError();
-      }
-      done();
-    });
-  });
-
   it("should fail for PORT in use", function (done) {
 
-    electrodeServer({}).then((server) =>
-        electrodeServer({})
+    electrodeServer().then((server) =>
+        electrodeServer()
           .then(expectedError)
           .catch((err) => {
-            if (_.contains(err.message, "is already in use")) {
+            if (_.includes(err.message, "is already in use")) {
               return stopServer(server);
             }
             done(err);
@@ -103,51 +86,18 @@ describe("electrode-server", function () {
       .then(done);
   });
 
-
-  it("should fail for @bad_config", function (done) {
-    electrodeServer("./test/data/bad-config.js")
-      .then(expectedError)
-      .catch((e) => {
-        if (_.contains(e.message, "Error in config")) {
-          return done();
-        }
-        done(e);
-      });
-  });
-
-
-  it("should try to @default_config_location", function (done) {
-    electrodeServer()
-      .then(expectedError)
-      .catch((e) => {
-        if (_.contains(e.message, "config/electrode-server/server.js")) {
-          return done();
-        }
-        done(e);
-      });
-  });
-
-  it("should start up with a good @empty_config", function (done) {
+  it("should start up with @empty_config", function (done) {
     const verifyServices = (server) => {
       assert(server.app.services[RegClient.providerName],
         "registry service is not present in server.app");
       return server;
     };
-    electrodeServer("./test/data/empty-config.js")
+    electrodeServer()
       .then(verifyServices)
       .then(stopServer)
       .then(() => done())
       .catch(done);
   });
-
-
-  it("should start up with @ES6_style_config", function (done) {
-    electrodeServer("./test/data/es6-config.js")
-      .then(stopServer)
-      .then(() => done())
-      .catch(done);
-  });
-
 
   it("should start up with @correct_plugins_priority", function (done) {
     const verify = (server) => {
@@ -155,7 +105,7 @@ describe("electrode-server", function () {
       assert.ok(server.plugins.es6StylePlugin, "es6StylePlugin missing in server");
       return server;
     };
-    electrodeServer("./test/data/server.js")
+    electrodeServer(require("../data/server.js"))
       .then(verify)
       .then(stopServer)
       .then(() => done())
@@ -168,7 +118,7 @@ describe("electrode-server", function () {
         .set("Cookie", `a=1;; b=123;;c=4;e=;f=" 12345"`) // should ignore cookie parsing errors
         .end((err, resp) => {
           assert(resp, "Server didn't return response");
-          assert(_.contains(resp.text, "Hello Test!"),
+          assert(_.includes(resp.text, "Hello Test!"),
             "response not contain expected string");
           resolve(server);
         });
@@ -192,7 +142,7 @@ describe("electrode-server", function () {
   });
 
   it("should fail start up due to @plugin_error", function (done) {
-    electrodeServer("./test/data/plugin-err.js")
+    electrodeServer(require("../data/plugin-err.js"))
       .then(expectedError)
       .catch((e) => {
         if (e._err.message === "plugin_failure") {
@@ -204,10 +154,10 @@ describe("electrode-server", function () {
 
 
   it("should fail start up due to @bad_plugin", function (done) {
-    electrodeServer("./test/data/bad-plugin.js")
+    electrodeServer(require("../data/bad-plugin.js"))
       .then(expectedError)
       .catch((e) => {
-        if (_.contains(e._err.message, "Failed loading module ./test/plugins/err-plugin")) {
+        if (_.includes(e._err.message, "Failed loading module ./test/plugins/err-plugin")) {
           return done();
         }
         done(e);
@@ -215,10 +165,10 @@ describe("electrode-server", function () {
   });
 
   it("should fail start up due to @duplicate_plugin", function (done) {
-    electrodeServer("./test/data/dup-plugin.js")
+    electrodeServer(require("../data/dup-plugin.js"))
       .then(expectedError)
       .catch((e) => {
-        if (_.contains(e.message, "error starting the Hapi.js server")) {
+        if (_.includes(e.message, "error starting the Hapi.js server")) {
           done();
         } else {
           done(e);
@@ -256,7 +206,7 @@ describe("electrode-server", function () {
     let seen = "failure message not seen";
     const msg = "failure tested";
     const unhook = interceptStdout((txt) => {
-      if (_.contains(txt, msg)) {
+      if (_.includes(txt, msg)) {
         seen = msg;
       }
     });
@@ -269,7 +219,7 @@ describe("electrode-server", function () {
         res.end("{}");
       }
     });
-    electrodeServer({})
+    electrodeServer()
       .then(stopServer)
       .then(() => {
         expect(seen).to.equal(msg);
@@ -302,7 +252,7 @@ describe("electrode-server", function () {
   });
 
   it("should load default config when no environment specified", (done) => {
-    electrodeServer({})
+    electrodeServer()
       .then((server) => {
 
         assert.equal(server.app.config.logging.logMode, "development");
@@ -314,7 +264,7 @@ describe("electrode-server", function () {
   it("should load config based on environment", (done) => {
     process.env.NODE_ENV = "production";
 
-    electrodeServer({})
+    electrodeServer()
       .then((server) => {
         assert.equal(server.app.config.logging.logMode, "production");
         process.env.NODE_ENV = "test";
@@ -327,7 +277,7 @@ describe("electrode-server", function () {
   it("should skip env config that doesn't exist", (done) => {
     process.env.NODE_ENV = "development";
 
-    electrodeServer({})
+    electrodeServer()
       .then((server) => {
         assert.equal(server.app.config.logging.logMode, "development");
         process.env.NODE_ENV = "test";
@@ -356,7 +306,7 @@ describe("electrode-server", function () {
       ccm: {
         autoLoad: true,
         interval: 0.3,
-        keys: []
+        keys: {}
       }
     };
     process.env.NODE_ENV = "development";
@@ -375,14 +325,21 @@ describe("electrode-server", function () {
       electrodeServer(config)
         .then((server) => {
           assert(server.app.ccm._lastRefreshed);
-          server.app.config.ccm.keys.push({
-            serviceName: "atlas-checkout",
-            configName: "guest-checkout"
-          });
+          server.app.config.ccm.keys.root = {
+            "data": {
+              "atlasXO": {
+                "serviceName": "atlas-checkout",
+                "+configNames": [
+                  "guest-checkout",
+                  "responsive-config",
+                  "opinion-lab"
+                ]
+              }
+            }
+          };
           return new Promise((resolve) => {
             const check = () => {
-              const x = server.app.ccm["atlas-checkout"];
-              const g = x && x["guest-checkout"];
+              const g = server.app.ccm.atlasXO;
               if (g && g.enable_guest_email) {
                 resolve();
               } else {
