@@ -42,7 +42,7 @@
     "node": ">= 4.2.2"
   },
   "dependencies": {
-    "@walmart/electrode-ccm-initializer": "^2.0.0",
+    "@walmart/electrode-ccm-initializer": "^3.0.0",
     "@walmart/electrode-cls-provider": "^1.0.2",
     "@walmart/electrode-confippet": "^1.2.10",
     "@walmart/electrode-cookies": "^1.0.0",
