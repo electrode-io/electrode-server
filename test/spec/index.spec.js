@@ -204,22 +204,19 @@ describe("electrode-server", function () {
 
   it("should log service initializer error to console", function (done) {
     let seen = "failure message not seen";
-    const msg = "failure tested";
+    const msg = "returned status 404";
     const unhook = interceptStdout((txt) => {
       if (_.includes(txt, msg)) {
         seen = msg;
       }
     });
-    const mitm = startMitm();
-    mitm.on("request", (req, res) => {
-      if (req.url === "/electrode/services/discovery/refresh") {
-        res.statusCode = 400;
-        res.end(msg);
-      } else {
-        res.end("{}");
+    electrodeServer({
+      plugins: {
+        // disable the plugins so refresh route will return 404 error
+        "@walmart/electrode-service-initializer": {enable: false},
+        "@walmart/electrode-ccm-initializer": {enable: false}
       }
-    });
-    electrodeServer()
+    })
       .then(stopServer)
       .then(() => {
         expect(seen).to.equal(msg);
@@ -227,7 +224,6 @@ describe("electrode-server", function () {
       .then(() => done())
       .catch(done)
       .finally(() => {
-        mitm.disable();
         unhook();
       });
   });
