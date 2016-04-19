@@ -228,7 +228,7 @@ Inside it will lookup the hostname with `os.hostname` and IP with `dns.lookup` a
 
 ## DNS cache
 
-If your application server makes network call to services using hostnames, it would benefited from DNS cache.
+If your application server makes network call to services using hostnames, it would benefit from DNS cache.
  
 The Electrode Platform VMs are configured with a name server that acts as a caching server, but Electrode Server also enables DNS caching at NodeJS level by using the [dnscache] module.
 
