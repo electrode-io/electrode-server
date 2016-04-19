@@ -57,6 +57,7 @@
     "bluebird": "^2",
     "chalk": "^1.1.1",
     "crumb": "^5.0.0",
+    "dnscache": "~0.0.4",
     "hapi": "^11.0.5",
     "in-publish": "^2.0.0",
     "inert": "^3.2.0",
