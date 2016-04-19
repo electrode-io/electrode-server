@@ -226,6 +226,29 @@ Inside it will lookup the hostname with `os.hostname` and IP with `dns.lookup` a
 }
 ```
 
+## DNS cache
+
+If your application server makes network call to services using hostnames, it would benefited from DNS cache.
+ 
+The Electrode Platform VMs are configured with a name server that acts as a caching server, but Electrode Server also enables DNS caching at NodeJS level by using the [dnscache] module.
+
+If you want to configure or turn this off, add a section `dnscache` to your app config:
+
+```js
+{
+    "dnscache": {
+        "enable": true,
+        "ttl": 600,
+        "cachesize": 500
+    }
+}
+```
+
+    * `enable`: turn NodeJS DNS cache on or off
+    * `ttl`: Time to live for cached entries in seconds.
+    * `cachesize`: Number of DNS entries to cache
+    
+
 ## API
 
 The electrode server exports a single API.
@@ -257,3 +280,4 @@ Also see Slack Channel `#electrode` or `#react`
 [Hapi inert plugin]: https://github.com/hapijs/inert
 [configuration files setup]: https://gecgithub01.walmart.com/electrode/electrode-config#configuration-files
 [Hapi inert plugin]: https://github.com/hapijs/inert
+[dnscache]: https://github.com/yahoo/dnscache
