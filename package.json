@@ -46,6 +46,7 @@
     "@walmart/electrode-cls-provider": "^1.0.2",
     "@walmart/electrode-confippet": "^1.2.10",
     "@walmart/electrode-cookies": "^1.0.0",
+    "@walmart/electrode-fetch": "^5.3.0",
     "@walmart/electrode-health": "^1.0.0",
     "@walmart/electrode-log-consumer": "^1.0.1",
     "@walmart/electrode-logging-plugin": "^1.0.3",
