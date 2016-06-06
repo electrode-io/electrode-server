@@ -290,9 +290,9 @@ describe("electrode-server", function () {
     const firedEvents = _.times(events.length, _.constant(false));
 
     const eventListener = (emitter) => {
-      _.each(events, (event, index) => {
+      _.each(events, (event) => {
         emitter.on(event, () => {
-          firedEvents[index] = true;
+          firedEvents[events.indexOf(event)] = true;
         });
       });
     };
