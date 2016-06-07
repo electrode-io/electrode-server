@@ -291,8 +291,9 @@ describe("electrode-server", function () {
 
     const eventListener = (emitter) => {
       _.each(events, (event, index) => {
-        emitter.on(event, () => {
+        emitter.on(event, (data) => {
           firedEvents[index] = true;
+          assert(data, "data should be set");
         });
       });
     };
@@ -303,7 +304,7 @@ describe("electrode-server", function () {
 
     electrodeServer(options)
       .then((server) => {
-        assert(firedEvents.indexOf(false) === -1);
+        assert(firedEvents.indexOf(false) === -1, "failed to fire event.");
         return stopServer(server);
       }).then(done);
   });
