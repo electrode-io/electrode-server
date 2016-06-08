@@ -294,6 +294,10 @@ describe("electrode-server", function () {
         emitter.on(event, (data) => {
           firedEvents[index] = true;
           assert(data, "data should be set");
+          assert(data.config, "config values should be set");
+
+          assert(index > 0 ? data.server : true, "server should be set");
+          assert(index > 1 ? data.plugins : true, `plugins should be set`);
         });
       });
     };
