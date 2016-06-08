@@ -32,7 +32,7 @@ Electrode Server comes with enough defaults such that you can spin up a Hapi ser
 require("@walmart/electrode-server")();
 ```
 
-Of course that doesn't do much but getting a 404 response from `http://localhost:3000`, so see below for configuring it. 
+Of course that doesn't do much but getting a 404 response from `http://localhost:3000`, so see below for configuring it.
 
 ## Configuration
 
@@ -82,8 +82,8 @@ All properties are optional (if not present, the default values shown below will
     }
     ```
 
-   
-* `connections` (Object) Connections to setup for the Hapi server.  Each connection should be an object field and its key is used as the labels of the connection. 
+
+* `connections` (Object) Connections to setup for the Hapi server.  Each connection should be an object field and its key is used as the labels of the connection.
 
    * _default_
 
@@ -123,7 +123,7 @@ All properties are optional (if not present, the default values shown below will
       }
     }
     ```
-    
+
   * Unless you have a reason to, please avoid specifying priority.  If you do, unless you have a reason otherwise, please use >= 200.
 
 ## Default plugins
@@ -134,7 +134,7 @@ All properties are optional (if not present, the default values shown below will
 
 `inert` is using [Hapi inert plugin] to handle static files.
 
-These two are `electrode-server's` internal plugins: 
+These two are `electrode-server's` internal plugins:
 
    * `appConfig` sets `req.app.config` to `server.app.config` as soon as a request comes in.  That's why its priority is low.
    * `staticPaths` is a simple plugin that serves static files from `dist/js`, `dist/images`, and `dist/html`.
@@ -166,7 +166,7 @@ const config = require("@walmart/electrode-config").config;
 require("@walmart/electrode-server")(config);
 ```
 
-## Adding a Hapi plugin 
+## Adding a Hapi plugin
 
 You can have `electrode-server` register any Hapi plugin that you want
 through your configuration file. Here's an example using the Store Info Plugin:
@@ -187,7 +187,7 @@ Then, add your plugin to the config `plugins` section.
 }
 ```
 
-Above config tells `electrode-server` to use the plugin's field name `@walmart/store-info-plugin` as the name of 
+Above config tells `electrode-server` to use the plugin's field name `@walmart/store-info-plugin` as the name of
 the plugin's module to load for registration with Hapi.
 
 ### Plugin configs
@@ -204,7 +204,7 @@ A note about priority: If you are wondering what value to set for priority, the 
 
 ### Other plugin configs
 
-  If a plugin's field name is not desired as its module name, then you can optionally specify one of the following 
+  If a plugin's field name is not desired as its module name, then you can optionally specify one of the following
   to provide the plugin's module for registration:
 
    * `register` - if specified, then treat as the plugin's `register` function to pass to Hapi
@@ -229,7 +229,7 @@ Inside it will lookup the hostname with `os.hostname` and IP with `dns.lookup` a
 ## DNS cache
 
 If your application server makes network call to services using hostnames, it would benefit from DNS cache.
- 
+
 The Electrode Platform VMs are configured with a name server that acts as a caching server, but Electrode Server also enables DNS caching at NodeJS level by using the [dnscache] module.
 
 If you want to configure or turn this off, add a section `dnscache` to your app config:
@@ -247,7 +247,7 @@ If you want to configure or turn this off, add a section `dnscache` to your app 
     * `enable`: turn NodeJS DNS cache on or off
     * `ttl`: Time to live for cached entries in seconds.
     * `cachesize`: Number of DNS entries to cache
-    
+
 
 ## API
 
@@ -259,10 +259,33 @@ The electrode server exports a single API.
 
    * `config` is the [electrode server config](#configuration-options)
    * Returns a promise resolving to the Hapi server
-   
+
    * `callback` is an optional errback with the signature `function (err, server)`
       * where `server` is the Hapi server
       * If callback is provided then promise is _not_ returned.
+
+#### Listening for server startup events
+This interface allows developers to receive events during the electrode-server initialization lifecycle. The following events are supported:
+
+* config-composed
+* server-created
+* plugins-sorted
+* plugins-registered
+* server-started
+* complete
+
+To receive events you must provide an optional listener at construction time to electrodeServer. This can be included on the original configuration object. The data object will
+contain handles to: `server`, `config`, and `plugins`. Depending on the stage
+some data may not be present. For example, `server` is not available before it
+has been created.
+
+```js
+myConfig.listener = (emitter) => {
+  emitter.on("server-created", (data) => {
+    // do something
+  });
+});
+```
 
 ## Support/Contact
 
@@ -275,7 +298,7 @@ Also see Slack Channel `#electrode` or `#react`
 [glue]: https://github.com/hapijs/glue
 [electrode-config]: https://gecgithub01.walmart.com/electrode/electrode-config
 [Hapi crumb plugin]: https://github.com/hapijs/crumb
-[Hapi's `Hapi.Server`]: http://hapijs.com/api#new-serveroptions 
+[Hapi's `Hapi.Server`]: http://hapijs.com/api#new-serveroptions
 [Hapi's `server.register`]: http://hapijs.com/api#serverregisterplugins-options-callback
 [Hapi inert plugin]: https://github.com/hapijs/inert
 [configuration files setup]: https://gecgithub01.walmart.com/electrode/electrode-config#configuration-files
