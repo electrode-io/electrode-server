@@ -283,6 +283,36 @@ describe("electrode-server", function () {
       .then(done);
   });
 
+  it("should emit lifecycle events", function (done) {
+    const events = ["config-composed", "server-created", "plugins-sorted",
+    "plugins-registered", "server-started", "complete"];
+
+    const firedEvents = _.times(events.length, _.constant(false));
+
+    const eventListener = (emitter) => {
+      _.each(events, (event, index) => {
+        emitter.on(event, (data) => {
+          firedEvents[index] = true;
+          assert(data, "data should be set");
+          assert(data.config, "config values should be set");
+
+          assert(index > 0 ? data.server : true, "server should be set");
+          assert(index > 1 ? data.plugins : true, `plugins should be set`);
+        });
+      });
+    };
+
+    const options = {
+      listener: eventListener
+    };
+
+    electrodeServer(options)
+      .then((server) => {
+        assert(firedEvents.indexOf(false) === -1, "failed to fire event.");
+        return stopServer(server);
+      }).then(done);
+  });
+
   describe("test ccm", function () {
 
     const config = {
