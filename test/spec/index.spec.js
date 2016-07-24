@@ -1,5 +1,5 @@
 "use strict";
-
+/* eslint-disable */
 const electrodeServer = require("../..");
 const assert = require("chai").assert;
 const _ = require("lodash");
@@ -7,9 +7,6 @@ const request = require("superagent");
 const Promise = require("bluebird");
 const startMitm = require("mitm");
 const interceptStdout = require("intercept-stdout");
-const wmlDecor = require("../../lib/wml");
-
-const RegClient = require("@walmart/service-registry-client");
 
 const HTTP_404 = 404;
 
@@ -41,8 +38,8 @@ describe("electrode-server", function () {
       throw err;
     });
 
-  const testSimplePromise = (config) =>
-    electrodeServer(config, wmlDecor()).then(verifyServer).then(stopServer);
+  const testSimplePromise = (config, decors) =>
+    electrodeServer(config, decors).then(verifyServer).then(stopServer);
 
   const testSimpleCallback = () =>
     new Promise((resolve, reject) => {
@@ -53,67 +50,60 @@ describe("electrode-server", function () {
       .then(verifyServer)
       .then(stopServer);
 
-  it("should start up a default server twice", function (done) {
-    testSimplePromise({
+  it("should start up a default server twice", function () {
+    return testSimplePromise({
       electrode: {
         hostname: "blah-test-923898234" // test bad hostname
       }
-    })
-      .then(() => testSimplePromise())
-      .then(done)
-      .catch(done);
+    }, require("../decor/decor1.js"))
+      .then(() => testSimplePromise(undefined, [require("../decor/decor2")]));
   });
 
-  it("should start up a server twice @callbacks", function (done) {
-    testSimpleCallback().then(testSimpleCallback).then(done).catch(done);
+  it("should start up a server twice @callbacks", function () {
+    return testSimpleCallback().then(testSimpleCallback);
   });
 
   const expectedError = () => {
     assert(false, "expected error from tested code");
   };
 
-  it("should fail for PORT in use", function (done) {
-
-    electrodeServer().then((server) =>
+  it("should fail for PORT in use", function () {
+    return electrodeServer().then((server) =>
       electrodeServer()
         .then(expectedError)
         .catch((err) => {
           if (_.includes(err.message, "is already in use")) {
             return stopServer(server);
           }
-          done(err);
+          throw err;
         })
-    )
-      .then(done);
+    );
   });
 
-  it("should start up with @empty_config", function (done) {
-    const verifyServices = (server) => {
-      assert(server.app.services[RegClient.providerName],
-        "registry service is not present in server.app");
-      return server;
-    };
-    electrodeServer(undefined, wmlDecor())
-      .then(verifyServices)
-      .then(stopServer)
-      .then(() => done())
-      .catch(done);
+  it("should fail for listener errors", function () {
+    return electrodeServer({}, require("../decor/decor3"))
+      .then(expectedError)
+      .catch((err) => {
+        expect(err.message).includes("test listner error");
+      });
   });
 
-  it("should start up with @correct_plugins_priority", function (done) {
+  it("should start up with @empty_config", function () {
+    return electrodeServer().then(stopServer);
+  });
+
+  it("should start up with @correct_plugins_priority", function () {
     const verify = (server) => {
       assert.ok(server.plugins.testPlugin, "testPlugin missing in server");
       assert.ok(server.plugins.es6StylePlugin, "es6StylePlugin missing in server");
       return server;
     };
-    electrodeServer(require("../data/server.js"), wmlDecor())
+    return electrodeServer(require("../data/server.js"))
       .then(verify)
-      .then(stopServer)
-      .then(() => done())
-      .catch(done);
+      .then(stopServer);
   });
 
-  it("should return static file", function (done) {
+  it("should return static file", function () {
     const verifyServerStatic = (server) => new Promise((resolve) => {
       request.get("http://localhost:3000/html/hello.html")
         .set("Cookie", `a=1;; b=123;;c=4;e=;f=" 12345"`) // should ignore cookie parsing errors
@@ -127,164 +117,130 @@ describe("electrode-server", function () {
 
     const config = {
       plugins: {
-        staticPaths: {
+        appConfig: {
           options: {
-            pathPrefix: "test/"
+            repairCookie: true
+          }
+        },
+        inert: {enable: true},
+        staticPaths: {
+          enable: true,
+          options: {
+            pathPrefix: "test/dist"
           }
         }
       }
     };
 
-    electrodeServer(config, wmlDecor())
+    return electrodeServer(config)
       .then(verifyServerStatic)
-      .then(stopServer)
-      .then(() => done())
-      .catch(done);
+      .then(stopServer);
   });
 
-  it("should fail start up due to @plugin_error", function (done) {
-    electrodeServer(require("../data/plugin-err.js"), wmlDecor())
+  it("should fail start up due to @plugin_error", function () {
+    return electrodeServer(require("../data/plugin-err.js"))
       .then(expectedError)
       .catch((e) => {
-        if (e._err.message === "plugin_failure") {
-          return done();
-        }
-        done(e);
-      });
-  });
-
-
-  it("should fail start up due to @bad_plugin", function (done) {
-    electrodeServer(require("../data/bad-plugin.js"), wmlDecor())
-      .then(expectedError)
-      .catch((e) => {
-        if (_.includes(e._err.message, "Failed loading module ./test/plugins/err-plugin")) {
-          return done();
-        }
-        done(e);
-      });
-  });
-
-  it("should fail start up due to @duplicate_plugin", function (done) {
-    electrodeServer(require("../data/dup-plugin.js"), wmlDecor())
-      .then(expectedError)
-      .catch((e) => {
-        if (_.includes(e.message, "error starting the Hapi.js server")) {
-          done();
-        } else {
-          done(e);
+        if (!_.includes(e._err.message, "plugin_failure")) {
+          throw e;
         }
       });
   });
 
-  it("should skip service initializer if it's not enabled", function (done) {
-    const mitm = startMitm();
-    mitm.on("request", (req, res) => {
-      if (req.url === "/electrode/services/discovery/refresh") {
-        throw new Error("not expecting request");
-      } else {
-        res.end("{}");
-      }
-    });
-    electrodeServer({
-      services: {
-        registryRefreshPath: ""
-      },
-      plugins: {
-        "@walmart/electrode-service-initializer": {enable: false},
-        "@walmart/electrode-ccm-initializer": {enable: false}
-      }
-    }, wmlDecor())
-      .then(stopServer)
-      .then(() => done())
-      .catch(done)
-      .finally(() => {
-        mitm.disable();
+
+  it("should fail start up due to @bad_plugin", function () {
+    return electrodeServer(require("../data/bad-plugin.js"))
+      .then(expectedError)
+      .catch((e) => {
+        if (!_.includes(e._err.message, "Failed loading module ./test/plugins/err-plugin")) {
+          throw e;
+        }
       });
   });
 
-  it("should log service initializer error to console", function (done) {
-    let seen = "failure message not seen";
-    const msg = "returned status 404";
-    const unhook = interceptStdout((txt) => {
-      if (_.includes(txt, msg)) {
-        seen = msg;
-      }
-    });
-    electrodeServer({
-      plugins: {
-        // disable the plugins so refresh route will return 404 error
-        "@walmart/electrode-service-initializer": {enable: false},
-        "@walmart/electrode-ccm-initializer": {enable: false}
-      }
-    }, wmlDecor())
-      .then(stopServer)
-      .then(() => {
-        expect(seen).to.equal(msg);
-      })
-      .then(() => done())
-      .catch(done)
-      .finally(() => {
-        unhook();
+  it("should fail start up due to @duplicate_plugin", function () {
+    return electrodeServer(require("../data/dup-plugin.js"))
+      .then(expectedError)
+      .catch((e) => {
+        if (!_.includes(e.message, "error starting the Hapi.js server")) {
+          throw e;
+        }
       });
   });
 
-  it("should fail with plugins register timeout", (done) => {
+  it("should fail with plugins register timeout", () => {
     const register = () => {
     };
     register.attributes = {name: "timeout"};
-    electrodeServer({
+    return electrodeServer({
       plugins: {
         test: {
           register
         }
       }
-    }, wmlDecor())
+    })
       .then(expectedError)
       .catch((e) => {
-        expect(e._err.message).to.include("Electrode Server register plugins timeout.  Did you forget next");
-        done();
+        if (!_.includes(e._err.message, "Electrode Server register plugins timeout.  Did you forget next")) {
+          throw e;
+        }
       })
-      .catch(done);
   });
 
-  it("should load default config when no environment specified", (done) => {
-    electrodeServer(undefined, wmlDecor())
+  it("should fail if plugin register failed", () => {
+    const register = (server, options, next) => {
+      next(new Error("test plugin register error"));
+    };
+    register.attributes = {name: "errorPlugin"};
+    return electrodeServer({
+      plugins: {
+        test: {
+          register
+        }
+      }
+    })
+      .then(expectedError)
+      .catch((e) => {
+        if (!_.includes(e._err.message, "test plugin register error")) {
+          throw e;
+        }
+      })
+
+  });
+
+  it("should load default config when no environment specified", () => {
+    return electrodeServer()
       .then((server) => {
-
-        assert.equal(server.app.config.logging.logMode, "development");
+        assert.equal(server.app.config.electrode.source, "development");
         return stopServer(server);
-      })
-      .then(done);
+      });
   });
 
-  it("should load config based on environment", (done) => {
+  it("should load config based on environment", () => {
     process.env.NODE_ENV = "production";
 
-    electrodeServer(undefined, wmlDecor())
+    return electrodeServer()
       .then((server) => {
-        assert.equal(server.app.config.logging.logMode, "production");
+        assert.equal(server.app.config.electrode.source, "production");
         process.env.NODE_ENV = "test";
 
         return stopServer(server);
-      })
-      .then(done);
+      });
   });
 
-  it("should skip env config that doesn't exist", (done) => {
+  it("should skip env config that doesn't exist", () => {
     process.env.NODE_ENV = "development";
 
-    electrodeServer(undefined, wmlDecor())
+    return electrodeServer()
       .then((server) => {
-        assert.equal(server.app.config.logging.logMode, "development");
+        assert.equal(server.app.config.electrode.source, "development");
         process.env.NODE_ENV = "test";
 
         return stopServer(server);
-      })
-      .then(done);
+      });
   });
 
-  it("should emit lifecycle events", function (done) {
+  it("should emit lifecycle events", function () {
     const events = ["config-composed", "server-created", "plugins-sorted",
       "plugins-registered", "server-started", "complete"];
 
@@ -308,113 +264,11 @@ describe("electrode-server", function () {
       listener: eventListener
     };
 
-    electrodeServer(options, wmlDecor())
+    return electrodeServer(options)
       .then((server) => {
         assert(firedEvents.indexOf(false) === -1, "failed to fire event.");
         return stopServer(server);
-      }).then(done);
-  });
-
-  describe("test ccm", function () {
-
-    const config = {
-      services: {
-        privateKey: {},
-        providers: {
-          "@walmart/electrode-ccm-client": {
-            "options": {
-              artifactId: "qa-service",
-              cloudEnvironment: "qa",
-              cloudDc: "qa",
-              environment: "qa"
-            }
-          }
-        }
-      },
-      ccm: {
-        autoLoad: true,
-        interval: 0.3,
-        keys: {}
-      }
-    };
-    process.env.NODE_ENV = "development";
-
-    const fs = require("fs");
-    const dir = `${process.cwd()}/.ccm`;
-    const file = `${dir}/snapshot.json`;
-
-    const cleanTmp = () => {
-      fs.unlink(file, () => {
-        fs.rmdir(dir);
       });
-    };
-
-    it("should get ccm configs after server start", (done) => {
-      electrodeServer(config, wmlDecor())
-        .then((server) => {
-          assert(server.app.ccm._lastRefreshed);
-          server.app.config.ccm.keys.root = {
-            "data": {
-              "atlasXO": {
-                "serviceName": "atlas-checkout",
-                "+configNames": [
-                  "guest-checkout",
-                  "responsive-config",
-                  "opinion-lab"
-                ]
-              }
-            }
-          };
-          return new Promise((resolve) => {
-            const check = () => {
-              const g = server.app.ccm.atlasXO;
-              if (g && g.enable_guest_email) {
-                resolve();
-              } else {
-                setTimeout(check, 100);
-              }
-            };
-            setTimeout(check, 100);
-          })
-            .timeout(5000)
-            .catch(Promise.TimeoutError, () => {
-              throw new Error("CCM was not refreshed before timeout");
-            })
-            .then(() => {
-              stopServer(server);
-            })
-            .then(done)
-            .catch(done)
-            .finally(cleanTmp);
-        });
-    });
-
-    it("should have a default interval", (done) => {
-      const cfg = _.cloneDeep(config);
-      cfg.ccm.interval = 0;
-      electrodeServer(cfg, wmlDecor())
-        .then((server) => {
-          assert(server.app.ccm._lastRefreshed, "ccm not loaded");
-          assert(server.app.refreshers.ccm.interval > 0, "ccm refresh interval not > 0");
-          stopServer(server);
-        })
-        .then(done)
-        .catch(done)
-        .finally(cleanTmp);
-    });
-
-    it("should not load CCM if autoLoad is not set true", (done) => {
-      const cfg = _.cloneDeep(config);
-      delete cfg.ccm.autoLoad;
-      electrodeServer(cfg, wmlDecor())
-        .then((server) => {
-          assert(!server.app.ccm._lastRefreshed, "ccm should not be loaded");
-
-          stopServer(server);
-        })
-        .then(done)
-        .catch(done);
-    });
   });
 
 });
