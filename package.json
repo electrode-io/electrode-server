@@ -1,16 +1,16 @@
 {
-  "name": "@walmart/electrode-server",
-  "version": "5.0.0",
+  "name": "electrode-server",
+  "version": "1.0.0",
   "description": "A configurable Hapi web server",
   "main": "lib/index.js",
   "scripts": {
-    "prepublish": "if in-publish; then builder run test; else echo not in publish; fi",
-    "test": "builder run test",
-    "coverage": "builder run check"
+    "prepublish": "if in-publish; then gulp test; else echo not in publish; fi",
+    "test": "gulp test",
+    "coverage": "gulp check"
   },
   "repository": {
     "type": "git",
-    "url": "https://gecgithub01.walmart.com/electrode/electrode-server.git"
+    "url": "https://github.com/electrode-io/electrode-server.git"
   },
   "keywords": [
     "electrode",
@@ -35,14 +35,26 @@
     {
       "name": "Joel Chen",
       "email": "xchen@walmartlabs.com"
+    },
+    {
+      "name": "Caoyang Shi",
+      "email": "CShi@walmartlabs.com"
+    },
+    {
+      "name": "Jason Wilson",
+      "email": "jrwilson@gmail.com"
+    },
+    {
+      "name": "Daniel Bretoi",
+      "email": "dbretoi@walmartlabs.com"
     }
   ],
-  "license": "UNLICENSED",
+  "license": "Apache-2.0",
   "engines": {
     "node": ">= 4.2.2"
   },
   "dependencies": {
-    "@walmart/electrode-confippet": "^1.2.10",
+    "electrode-confippet": "^1.2.10",
     "async-eventemitter": "^0.2.2",
     "bluebird": "^2",
     "chalk": "^1.1.1",
@@ -52,10 +64,9 @@
     "lodash": "^4.5.1"
   },
   "devDependencies": {
-    "@walmart/electrode-archetype-hapi-plugin-dev": "^2.0.0",
-    "@walmart/electrode-ccm-client": "^2.0.0",
-    "builder": "^2.4.0",
+    "electrode-archetype-njs-module-dev": "^1.0.0",
     "intercept-stdout": "^0.1.2",
-    "mitm": "^1.2.0"
+    "mitm": "^1.2.0",
+    "superagent": "^2.1.0"
   }
 }

@@ -255,7 +255,7 @@ The electrode server exports a single API.
    * `callback` is an optional errback with the signature `function (err, server)`
       * where `server` is the Hapi server
    * `decors` - Optional extra `config` or array of `config`.  In case you have common config you want to put inside a dedicated module, you can pass them in here.
-      * If it's an array like `[ decor1, decor2, decor3 ]` then they are composed from right to left
+      * If it's an array like `[ decor1, decor2, decor3 ]` then they are composed from left to right.  Rightmost will be the final value when there's overlapping.
       * The final decor is then composed into electrode-server's defaults before applying `config`.
    * Returns a promise resolving to the Hapi server if callback is not provided
 
