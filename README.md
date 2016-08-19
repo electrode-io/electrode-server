@@ -35,7 +35,7 @@ For example, if you want to spin up a server with HTTP compression off:
 
 ```js
 const config = {
-    connection: {
+    connections: {
         default: {
             compression: false
         }
