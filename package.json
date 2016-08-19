@@ -46,16 +46,16 @@
     "async-eventemitter": "^0.2.2",
     "bluebird": "^2",
     "chalk": "^1.1.1",
-    "hapi": "^11.0.5",
+    "hapi": ">= 11.x.x <= 14.x.x",
     "in-publish": "^2.0.0",
-    "inert": "^3.2.0",
+    "inert": "^4.0.1",
     "lodash": "^4.5.1"
   },
   "devDependencies": {
-    "@walmart/electrode-archetype-hapi-plugin-dev": "^2.0.0",
-    "@walmart/electrode-ccm-client": "^2.0.0",
+    "@walmart/electrode-archetype-njs-module-dev": "^1.1.0",
     "builder": "^2.4.0",
     "intercept-stdout": "^0.1.2",
-    "mitm": "^1.2.0"
+    "mitm": "^1.2.0",
+    "superagent": "^2.2.0"
   }
 }
