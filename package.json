@@ -58,9 +58,9 @@
     "async-eventemitter": "^0.2.2",
     "bluebird": "^2",
     "chalk": "^1.1.1",
-    "hapi": "^11.0.5",
+    "hapi": ">= 11.x.x <= 14.x.x",
     "in-publish": "^2.0.0",
-    "inert": "^3.2.0",
+    "inert": "^4.0.1",
     "lodash": "^4.5.1"
   },
   "devDependencies": {
