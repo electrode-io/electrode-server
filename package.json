@@ -2,7 +2,7 @@
   "name": "electrode-server",
   "version": "1.0.0",
   "description": "A configurable Hapi web server",
-  "main": "lib/index.js",
+  "main": "lib/electrode-server.js",
   "scripts": {
     "prepublish": "if in-publish; then gulp test; else echo not in publish; fi",
     "test": "gulp test",
@@ -60,11 +60,11 @@
     "chalk": "^1.1.1",
     "hapi": ">= 11.x.x <= 14.x.x",
     "in-publish": "^2.0.0",
-    "inert": "^4.0.1",
     "lodash": "^4.5.1"
   },
   "devDependencies": {
     "electrode-archetype-njs-module-dev": "^1.0.0",
+    "inert": "^4.0.1",
     "intercept-stdout": "^0.1.2",
     "mitm": "^1.2.0",
     "superagent": "^2.1.0"

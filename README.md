@@ -31,12 +31,13 @@ See below for configuration options on how to register your plugin through elect
 
 You can pass in a config object that controls every aspect of the Hapi server.
 
-For example, if you want to spin up a server with HTTP compression off:
+For example, if you want to spin up a server with HTTP compression off at port 9000:
 
 ```js
 const config = {
     connections: {
         default: {
+            port: 9000,
             compression: false
         }
     }
@@ -100,27 +101,10 @@ All properties are optional (if not present, the default values shown below will
     ```js
     {
       plugins: {
-        appConfig: {
-          enable: true,
-          module: `${__dirname}/../plugins/app-config.js`,
-          options: {}
-        },
-        inert: {
-          enable: false
-        },
-        staticPaths: {
-          enable: false,
-          module: `${__dirname}/../plugins/static-paths.js`,
-          options: {
-            pathPrefix: "",
-            config: {}
-          }
-        }
       }
     }
     ```
 
-    > `inert` is using [Hapi inert plugin] to handle static files.
     
 ### `listener` (function) 
 
@@ -153,30 +137,6 @@ myConfig.listener = (emitter) => {
 });
 ```
 
-## Default plugins
-
-`electrode-server` registers a few plugins by default.
-
-These two are `electrode-server's` internal plugins:
-
-   * `appConfig` sets `req.app.config` to `server.app.config` as soon as a request comes in.  That's why its priority is low.
-   * `staticPaths` is a simple plugin that serves static files from `${pathPrefix}/js`, `${pathPrefix}/images`, and `${pathPrefix}/html`.
-
-If you want to turn on/off one of these default plugins, you can set its `enable` flag to false.  For example, to turn off
-the `appConfig` plugin, in your config, do:
-
-```js
-{
-  plugins: {
-    appConfig: {
-      enable: false
-    }
-  }
-}
-```
-
-> Please refer to the code for [latest default plugins](lib/config/default.js#L39).
-
 ## electrode-confippet
 
 To keep your environment specific configurations manageable, you can use [electrode-confippet].
@@ -207,7 +167,6 @@ Then, add your plugin to the config `plugins` section.
       enable: true,
       options: {},
       priority: 210,
-      register: function (...) {},
       module: "crumb"
     }
   }
@@ -220,26 +179,23 @@ the plugin's module to load for registration with Hapi.
 ### Plugin configs
 
    * plugin field name - generally use as the name of the plugin module to load for registration
+   * `module` - name of the module to load for the plugin instead of the field name
    * `enable` - if set to `false` then this plugin won't be registered.  If it's not set then it's considered to be `true`.
    * `options` - Object that's passed to the plugin's register function.
    * `priority` - integer value to indicate the plugin's registration order
       * Lower value ones are register first
       * Default to `Infinity` if this field is missing or has no valid integer value (`NaN`) (string of number accepted)
-   * `register` and `module` - mutually exclusive fields to allow you to specify the register function or the name of the module for the plugin.  See more details under [Other plugin configs](#otherpluginconfigs).
 
-#### About Priority
+#### About Plugin Priority
 
-  * Priority works in a way to allow you to arrange plugins to be registered in an order you prefer.
-  * Unless you have a reason to, please avoid specifying priority.  If you do, unless you have a reason otherwise, please use >= 200.
-
-> A note about priority: If you are wondering what value to set for priority, the most likely answer is you **should not** set it.
+Priority allows you to arrange plugins to be registered in an order you prefer.  The plugins with lower priority values are registered first. 
 
 ### Other plugin configs
 
 If a plugin's field name is not desired as its module name, then you can optionally specify one of the following
 to provide the plugin's module for registration:
 
-   * `register` - if specified, then treat as the plugin's `register` function to pass to Hapi
+   * `register` - if specified, then treat as the plugin's `register` function to pass to Hapi, ***overides module***
    * `module` - if specified and `register` is not, then treat it as the name of the plugin module to load for registration.
       * If you absolutely do not want electrode server to try loading any module for this plugin, then set `module` to false.
 
@@ -265,6 +221,4 @@ The electrode server exports a single API.
 [Hapi crumb plugin]: https://github.com/hapijs/crumb
 [Hapi's `Hapi.Server`]: http://hapijs.com/api#new-serveroptions
 [Hapi's `server.register`]: http://hapijs.com/api#serverregisterplugins-options-callback
-[Hapi inert plugin]: https://github.com/hapijs/inert
 [configuration files setup]: https://www.npmjs.com/package/electrode-confippet#configuration-files
-[Hapi inert plugin]: https://github.com/hapijs/inert
