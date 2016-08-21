@@ -1,12 +1,11 @@
 "use strict";
-/* eslint-disable */
+
+const path = require("path");
 const electrodeServer = require("../..");
 const assert = require("chai").assert;
 const _ = require("lodash");
 const request = require("superagent");
 const Promise = require("bluebird");
-const startMitm = require("mitm");
-const interceptStdout = require("intercept-stdout");
 
 const HTTP_404 = 404;
 
@@ -55,8 +54,8 @@ describe("electrode-server", function () {
       electrode: {
         hostname: "blah-test-923898234" // test bad hostname
       }
-    }, require("../decor/decor1.js"))
-      .then(() => testSimplePromise(undefined, [require("../decor/decor2")]));
+    }, [require("../decor/decor1.js")])
+      .then(() => testSimplePromise(undefined, require("../decor/decor2")));
   });
 
   it("should start up a server twice @callbacks", function () {
@@ -104,9 +103,10 @@ describe("electrode-server", function () {
   });
 
   it("should return static file", function () {
-    const verifyServerStatic = (server) => new Promise((resolve) => {
+    let server;
+    const verifyServerStatic = (s) => new Promise((resolve) => {
+      server = s;
       request.get("http://localhost:3000/html/hello.html")
-        .set("Cookie", `a=1;; b=123;;c=4;e=;f=" 12345"`) // should ignore cookie parsing errors
         .end((err, resp) => {
           assert(resp, "Server didn't return response");
           assert(_.includes(resp.text, "Hello Test!"),
@@ -118,13 +118,10 @@ describe("electrode-server", function () {
     const config = {
       plugins: {
         appConfig: {
-          options: {
-            repairCookie: true
-          }
+          module: path.join(__dirname, "../plugins/app-config"),
+          options: {}
         },
-        inert: {enable: true},
-        staticPaths: {
-          enable: true,
+        staticPaths2: {
           options: {
             pathPrefix: "test/dist"
           }
@@ -132,9 +129,9 @@ describe("electrode-server", function () {
       }
     };
 
-    return electrodeServer(config)
+    return electrodeServer(config, [require("../decor/decor-static-paths")])
       .then(verifyServerStatic)
-      .then(stopServer);
+      .finally(() => stopServer(server));
   });
 
   it("should fail start up due to @plugin_error", function () {
@@ -184,7 +181,7 @@ describe("electrode-server", function () {
         if (!_.includes(e._err.message, "Electrode Server register plugins timeout.  Did you forget next")) {
           throw e;
         }
-      })
+      });
   });
 
   it("should fail if plugin register failed", () => {
@@ -204,7 +201,7 @@ describe("electrode-server", function () {
         if (!_.includes(e._err.message, "test plugin register error")) {
           throw e;
         }
-      })
+      });
 
   });
 
