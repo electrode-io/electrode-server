@@ -4,7 +4,7 @@
   "description": "A configurable Hapi web server",
   "main": "lib/electrode-server.js",
   "scripts": {
-    "prepublish": "if in-publish; then gulp test; else echo not in publish; fi",
+    "prepublish": "which in-publish && if in-publish; then gulp test; else echo not in publish; fi",
     "test": "gulp test",
     "coverage": "gulp check"
   },
