@@ -45,7 +45,7 @@
     "async-eventemitter": "^0.2.2",
     "bluebird": "^3.4.6",
     "chalk": "^1.1.1",
-    "hapi": ">= 11.x.x <= 15.x.x",
+    "hapi": ">= 11.1.4 <= 15.x.x",
     "in-publish": "^2.0.0",
     "lodash": "^4.5.1"
   },
