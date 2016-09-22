@@ -1,4 +1,4 @@
-# Electrode Server
+# Electrode Server [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url]
 
 This is an imaginatively named, configurable web server using Hapi.js atop Node.js.
 
@@ -222,3 +222,9 @@ The electrode server exports a single API.
 [Hapi's `Hapi.Server`]: http://hapijs.com/api#new-serveroptions
 [Hapi's `server.register`]: http://hapijs.com/api#serverregisterplugins-options-callback
 [configuration files setup]: https://www.npmjs.com/package/electrode-confippet#configuration-files
+[npm-image]: https://badge.fury.io/js/electrode-server.svg
+[npm-url]: https://npmjs.org/package/electrode-server
+[travis-image]: https://travis-ci.org/electrode-io/electrode-server.svg?branch=master
+[travis-url]: https://travis-ci.org/electrode-io/electrode-server
+[daviddm-image]: https://david-dm.org/electrode-io/electrode-server.svg?theme=shields.io
+[daviddm-url]: https://david-dm.org/electrode-io/electrode-server
