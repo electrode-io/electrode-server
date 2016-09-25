@@ -73,7 +73,7 @@ All properties are optional (if not present, the default values shown below will
     ```
 
 
-### `connections` (Object) 
+### `connections` (Object)
 
    * Connections to setup for the Hapi server.  Each connection should be an object field and its key is used as the labels of the connection.
 
@@ -92,7 +92,7 @@ All properties are optional (if not present, the default values shown below will
     }
     ```
 
-### `plugins` (Object) 
+### `plugins` (Object)
 
    * plugin registration objects, converted to an array of its values and passed to [Hapi's `server.register`]
 
@@ -105,8 +105,8 @@ All properties are optional (if not present, the default values shown below will
     }
     ```
 
-    
-### `listener` (function) 
+
+### `listener` (function)
 
    * A function to install event listeners for the electrode server startup lifecycle.
 
@@ -120,13 +120,13 @@ All properties are optional (if not present, the default values shown below will
        * `server-started`     - Server started
        * `complete`           - Final step before returning
 
-To receive events you must provide an optional listener at construction time to electrodeServer. 
+To receive events you must provide an optional listener at construction time to electrodeServer.
 This can be included on the original configuration object. The data object will
 contain handles to: `emitter`, `server`, `config`, and `plugins`. Depending on the stage
 some data may not be present. For example, `server` is not available until `server-created` event
 and `plugins` is not available until `plugins-sorted` event.
 
-> These are async events so you have to take a `next` callback parameter and call it at the end of your handler. 
+> These are async events so you have to take a `next` callback parameter and call it at the end of your handler.
 
 ```js
 myConfig.listener = (emitter) => {
@@ -188,7 +188,7 @@ the plugin's module to load for registration with Hapi.
 
 #### About Plugin Priority
 
-Priority allows you to arrange plugins to be registered in an order you prefer. The plugins with lower priority values are registered first. 
+Priority allows you to arrange plugins to be registered in an order you prefer. The plugins with lower priority values are registered first.
 
 ### Other plugin configs
 
@@ -216,6 +216,8 @@ The electrode server exports a single API.
    * Returns a promise resolving to the Hapi server if callback is not provided
 
 ## License
+
+Built with :heart: by [Team Electrode](https://github.com/orgs/electrode-io/people) @WalmartLabs.
 
 [electrode-confippet]: https://www.npmjs.com/package/electrode-confippet
 [Hapi crumb plugin]: https://github.com/hapijs/crumb
