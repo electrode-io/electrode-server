@@ -39,11 +39,11 @@ module.exports = {
   connections: {
     test1: {
       labels: "test1-label",
-      port: 4000
+      port: 0
     },
     test2: {
       labels: ["test2-label"],
-      port: 5000
+      port: 0
     }
   },
 
