@@ -43,7 +43,7 @@
   "dependencies": {
     "electrode-confippet": "^1.2.10",
     "async-eventemitter": "^0.2.2",
-    "bluebird": "^3.4.6",
+    "bluebird": ">= 2.10.0 <= 3.x.x",
     "chalk": "^1.1.1",
     "hapi": ">= 11.1.4 <= 15.x.x",
     "in-publish": "^2.0.0",
