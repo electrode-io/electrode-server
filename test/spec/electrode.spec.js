@@ -13,6 +13,14 @@ describe("electrode-server", function () {
 
   this.timeout(10000);
 
+  beforeEach(() => {
+    process.env.PORT = 0;
+  });
+
+  afterEach(() => {
+    delete process.env.PORT;
+  });
+
   const stopServer = (server) =>
     new Promise((resolve, reject) =>
       server.stop((stopErr) => {
@@ -22,7 +30,7 @@ describe("electrode-server", function () {
   const verifyServer = (server) => new Promise((resolve) => {
     assert(server.settings.app.config, "server.settings.app.config not available");
     assert(server.app.config, "server.app.config not available");
-    request.get("http://localhost:3000/html/test.html").end((err, resp) => {
+    request.get(`http://localhost:${server.info.port}/html/test.html`).end((err, resp) => {
       assert.equal(err.message, "Not Found");
       assert.equal(err.status, HTTP_404);
       assert.ok(resp, "No response from server");
@@ -59,7 +67,7 @@ describe("electrode-server", function () {
   });
 
   it("should start up a server twice @callbacks", function () {
-    return testSimpleCallback().then(testSimpleCallback);
+    return testSimpleCallback().then(testSimpleCallback).then();
   });
 
   const expectedError = () => {
@@ -68,7 +76,13 @@ describe("electrode-server", function () {
 
   it("should fail for PORT in use", function () {
     return electrodeServer().then((server) =>
-      electrodeServer()
+      electrodeServer({
+        connections: {
+          default: {
+            port: server.info.port
+          }
+        }
+      })
         .then(expectedError)
         .catch((err) => {
           if (_.includes(err.message, "is already in use")) {
@@ -106,7 +120,7 @@ describe("electrode-server", function () {
     let server;
     const verifyServerStatic = (s) => new Promise((resolve) => {
       server = s;
-      request.get("http://localhost:3000/html/hello.html")
+      request.get(`http://localhost:${s.info.port}/html/hello.html`)
         .end((err, resp) => {
           assert(resp, "Server didn't return response");
           assert(_.includes(resp.text, "Hello Test!"),
@@ -174,6 +188,9 @@ describe("electrode-server", function () {
         test: {
           register
         }
+      },
+      electrode: {
+        registerPluginsTimeout: 5000
       }
     })
       .then(expectedError)
