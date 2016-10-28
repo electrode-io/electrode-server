@@ -1,6 +1,6 @@
 {
   "name": "electrode-server",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "A configurable Hapi web server",
   "main": "lib/electrode-server.js",
   "scripts": {
