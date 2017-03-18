@@ -62,15 +62,15 @@ All properties are optional (if not present, the default values shown below will
 
    * _default_
 
-    ```js    
-    {
-      server: {
-        app: {
-          electrode: true
-        }
-      }
+```js    
+{
+  server: {
+    app: {
+      electrode: true
     }
-    ```
+  }
+}
+```
 
 
 ### `connections` (Object)
@@ -79,18 +79,18 @@ All properties are optional (if not present, the default values shown below will
 
    * _default_
 
-    ```js
-    {
-        default: {
-          host: process.env.HOST,
-          address: process.env.HOST_IP || "0.0.0.0",
-          port: parseInt(process.env.PORT, 10) || 3000,
-          routes: {
-            cors: true
-          }
-        }
+```js
+{
+    default: {
+      host: process.env.HOST,
+      address: process.env.HOST_IP || "0.0.0.0",
+      port: parseInt(process.env.PORT, 10) || 3000,
+      routes: {
+        cors: true
+      }
     }
-    ```
+}
+```
 
 ### `plugins` (Object)
 
@@ -98,12 +98,12 @@ All properties are optional (if not present, the default values shown below will
 
    * _default_
 
-    ```js
-    {
-      plugins: {
-      }
-    }
-    ```
+```js
+{
+  plugins: {
+  }
+}
+```
 
 
 ### `listener` (function)
