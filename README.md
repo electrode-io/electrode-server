@@ -148,7 +148,7 @@ If you do not want this message to be printed, you can turn it off by setting
 ```js
 {
   electrode: {
-    supressStartupBanner: true
+    suppressStartupBanner: true
   }
 }
 ```

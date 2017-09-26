@@ -307,7 +307,7 @@ describe("electrode-server", function () {
     };
     return electrodeServer({
       electrode: {
-        supressStartupBanner: true
+        suppressStartupBanner: true
       }
     })
       .then((server) => {
