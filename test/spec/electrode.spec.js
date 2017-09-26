@@ -285,4 +285,36 @@ describe("electrode-server", function () {
       });
   });
 
+  it("displays a startup banner at startup time", () => {
+    const l = console.log;
+    let msg;
+    console.log = (m) => {
+      msg = m;
+    };
+    return electrodeServer()
+      .then((server) => {
+        console.log = l;
+        assert.include(msg, "Hapi.js server running");
+        return stopServer(server);
+      });
+  });
+
+  it("displays no startup banner at startup time if supressStartupBanner=true", () => {
+    const l = console.log;
+    let msg;
+    console.log = (m) => {
+      msg = m;
+    };
+    return electrodeServer({
+      electrode: {
+        supressStartupBanner: true
+      }
+    })
+      .then((server) => {
+        console.log = l;
+        assert.isUndefined(msg);
+        return stopServer(server);
+      });
+  });
+
 });

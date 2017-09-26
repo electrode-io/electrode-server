@@ -137,6 +137,23 @@ myConfig.listener = (emitter) => {
 });
 ```
 
+### Misc
+
+By default, the Electrode Server will print a handy banner on the console at startup time that tells you how to find the server. For example:
+```
+Hapi.js server running at http://mypc:4000
+```
+If you do not want this message to be printed, you can turn it off by setting 
+
+```js
+{
+  electrode: {
+    supressStartupBanner: true
+  }
+}
+```
+
+
 ## electrode-confippet
 
 To keep your environment specific configurations manageable, you can use [electrode-confippet].
