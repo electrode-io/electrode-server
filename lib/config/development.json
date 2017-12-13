@@ -1,5 +1,12 @@
 {
   "electrode": {
     "source": "development"
+  },
+  "connections": {
+    "default": {
+      "routes": {
+        "cors": true
+      }
+    }
   }
 }
