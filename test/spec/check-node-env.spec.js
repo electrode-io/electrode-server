@@ -1,6 +1,7 @@
 "use strict";
 
 const checkNodeEnv = require("../../lib/check-node-env.js");
+const logger = require("../../lib/logger.js");
 const Chai = require("chai");
 
 describe("process-env-abbr", function () {
@@ -33,14 +34,14 @@ describe("process-env-abbr", function () {
   });
 
   it("should print warning for unexpected NODE_ENV", function (done) {
-    const w = console.warn;
+    const w = logger.warn;
     let msg;
-    console.warn = (m) => {
+    logger.warn = (m) => {
       msg = m;
     };
     process.env.NODE_ENV = "undefined";
     checkNodeEnv();
-    console.warn = w;
+    logger.warn = w;
     Chai.expect(msg).includes("should be empty or one of");
     done();
   });

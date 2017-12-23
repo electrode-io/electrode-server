@@ -286,32 +286,32 @@ describe("electrode-server", function () {
   });
 
   it("displays a startup banner at startup time", () => {
-    const l = console.log;
+    const i = console.info;
     let msg;
-    console.log = (m) => {
+    console.info = (m) => {
       msg = m;
     };
     return electrodeServer()
       .then((server) => {
-        console.log = l;
+        console.info = i;
         assert.include(msg, "Hapi.js server running");
         return stopServer(server);
       });
   });
 
-  it("displays no startup banner at startup time if supressStartupBanner=true", () => {
-    const l = console.log;
+  it("displays no startup banner at startup time if logLevel is set to something other than info", () => {
+    const i = console.info;
     let msg;
-    console.log = (m) => {
+    console.info = (m) => {
       msg = m;
     };
     return electrodeServer({
       electrode: {
-        suppressStartupBanner: true
+        logLevel: "warn"
       }
     })
       .then((server) => {
-        console.log = l;
+        console.info = i;
         assert.isUndefined(msg);
         return stopServer(server);
       });

@@ -137,22 +137,23 @@ myConfig.listener = (emitter) => {
 });
 ```
 
-### Misc
+### logLevel
 
-By default, the Electrode Server will print a handy banner on the console at startup time that tells you how to find the server. For example:
-```
-Hapi.js server running at http://mypc:4000
-```
-If you do not want this message to be printed, you can turn it off by setting 
+You can control how much output the Electrode Server logs to the console by setting the `logLevel` property in the config to "info" (the default if this is not specified at all), "warn" or "error". A level of "warn" means only warning and error messages will be printed.
 
 ```js
 {
   electrode: {
-    suppressStartupBanner: true
+    logLevel: "info"|"warn"|"error"
   }
 }
 ```
 
+So, for example, to suppress the handy informational banner that is shown when the server starts up:
+```
+Hapi.js server running at http://mypc:4000
+```
+set the logLevel to "warn" or "error".
 
 ## electrode-confippet
 
