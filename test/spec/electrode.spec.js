@@ -285,4 +285,35 @@ describe("electrode-server", function () {
       });
   });
 
+  it("displays a startup banner at startup time", () => {
+    const i = console.info;
+    let msg;
+    console.info = (m) => {
+      msg = m;
+    };
+    return electrodeServer()
+      .then((server) => {
+        console.info = i;
+        assert.include(msg, "Hapi.js server running");
+        return stopServer(server);
+      });
+  });
+
+  it("displays no startup banner at startup time if logLevel is set to something other than info", () => {
+    const i = console.info;
+    let msg;
+    console.info = (m) => {
+      msg = m;
+    };
+    return electrodeServer({
+      electrode: {
+        logLevel: "warn"
+      }
+    })
+      .then((server) => {
+        console.info = i;
+        assert.isUndefined(msg);
+        return stopServer(server);
+      });
+  });
 });

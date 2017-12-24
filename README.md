@@ -46,7 +46,7 @@ const config = {
 require("electrode-server")(config);
 ```
 
-However, for a more complex application, it's recommended that you use a config composer such as [electrode-confippet] to manage your app configuration.  
+However, for a more complex application, it's recommended that you use a config composer such as [electrode-confippet] to manage your app configuration.
 
 ## Configuration Options
 
@@ -62,7 +62,7 @@ All properties are optional (if not present, the default values shown below will
 
    * _default_
 
-```js    
+```js
 {
   server: {
     app: {
@@ -137,7 +137,26 @@ myConfig.listener = (emitter) => {
 });
 ```
 
-## electrode-confippet
+### logLevel
+
+You can control how much output the Electrode Server logs to the console by setting the `logLevel` property in the config to "info" (the default if this is not specified at all), "warn" or "error". A level of "warn" means only warning and error messages will be printed.
+
+```js
+{
+  electrode: {
+    suppressStartupBanner: true
+  }
+}
+```
+
+So, for example, to suppress the handy informational banner that is shown when the server starts up:
+```
+Hapi.js server running at http://mypc:4000
+```
+set the logLevel to "warn" or "error".
+
+
+ ## electrode-confippet
 
 To keep your environment specific configurations manageable, you can use [electrode-confippet].
 
