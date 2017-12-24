@@ -15,7 +15,7 @@ const after = (options) => (server, next) => {
     pathPrefix = options.pathPrefix;
     if (!options.quiet) {
       const msg = `staticPaths Plugin: static files path prefix "${pathPrefix}"`;
-      console.info(Chalk.inverse.green(msg)); // eslint-disable-line
+      console.log(Chalk.inverse.green(msg)); // eslint-disable-line
     }
   }
 
