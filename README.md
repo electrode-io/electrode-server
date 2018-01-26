@@ -144,7 +144,7 @@ You can control how much output the Electrode Server logs to the console by sett
 ```js
 {
   electrode: {
-    suppressStartupBanner: true
+    logLevel: true
   }
 }
 ```
