@@ -13,4 +13,3 @@ testPlugin.attributes = {
 };
 
 module.exports = testPlugin;
-

@@ -4,7 +4,7 @@ const path = require("path");
 
 module.exports = {
   plugins: {
-    "inert": {
+    inert: {
       priority: 100,
       options: {}
     },

@@ -1,8 +1,5 @@
 /* eslint-disable */
 
-const test = (foo = {}) => {
+const test = (foo = {}) => {};
 
-};
-
-fail
-
+fail;
