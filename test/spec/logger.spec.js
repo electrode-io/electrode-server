@@ -7,7 +7,7 @@ describe("logger", function() {
   describe("setLevel()", () => {
     it("throws an Error if it is passed an unknown level", () => {
       Chai.expect(() => logger.setLevel("bogus")).to.throw(
-        `Log level must be one of info, warn, error. Received "bogus".`
+        `Log level must be one of info, warn, error, none. Received "bogus".`
       );
     });
   });
@@ -99,6 +99,19 @@ describe("logger", function() {
       logger.error(1, 2, 3);
 
       Chai.expect(result).to.deep.equal([1, 2, 3]);
+    });
+
+    it("logs no error message if the level is set to none", () => {
+      logger.setLevel("none");
+
+      let result;
+      console.error = (...values) => {
+        result = values;
+      };
+
+      logger.error(1, 2, 3);
+
+      Chai.expect(result).to.equal(undefined);
     });
   });
 });
