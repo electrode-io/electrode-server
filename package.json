@@ -4,9 +4,9 @@
   "description": "A configurable Hapi web server",
   "main": "lib/electrode-server.js",
   "scripts": {
-    "prepublish": "which in-publish && if in-publish; then gulp test; else echo not in publish; fi",
-    "test": "gulp test",
-    "coverage": "gulp check"
+    "prepublish": "which in-publish && if in-publish; then clap test; else echo not in publish; fi",
+    "test": "clap test",
+    "coverage": "clap check"
   },
   "repository": {
     "type": "git",
@@ -54,10 +54,31 @@
     "lodash": "^4.5.1"
   },
   "devDependencies": {
-    "electrode-archetype-njs-module-dev": "^1.0.0",
+    "electrode-archetype-njs-module-dev": "^3.0.0",
     "inert": "^4.0.1",
     "intercept-stdout": "^0.1.2",
     "mitm": "^1.2.0",
     "superagent": "^2.1.0"
+  },
+  "nyc": {
+    "all": true,
+    "reporter": [
+      "lcov",
+      "text",
+      "text-summary"
+    ],
+    "exclude": [
+      "coverage",
+      "*clap.js",
+      "gulpfile.js",
+      "dist",
+      "test"
+    ],
+    "check-coverage": true,
+    "statements": 100,
+    "branches": 100,
+    "functions": 100,
+    "lines": 100,
+    "cache": true
   }
 }
