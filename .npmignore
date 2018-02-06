@@ -141,3 +141,5 @@ node_modules
 /.travis.yml
 /gulpfile.js
 /test
+/xclap.js
+/.nyc_output
