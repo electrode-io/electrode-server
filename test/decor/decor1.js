@@ -4,8 +4,7 @@ const path = require("path");
 
 module.exports = {
   plugins: {
-    inert: {
-    },
+    inert: {},
     staticPaths: {
       enable: true,
       module: path.join(__dirname, "../plugins/static-paths"),
@@ -15,6 +14,5 @@ module.exports = {
       }
     }
   },
-  listener: () => {
-  }
+  listener: () => {}
 };

@@ -13,4 +13,3 @@ es6StylePlugin.attributes = {
 };
 
 module.exports.default = es6StylePlugin;
-

@@ -21,7 +21,6 @@ nulPlugin1.attributes = {
   }
 };
 
-
 function nulPlugin2(server, options, next) {
   server.app.plugin2 = true;
   return next(!server.app.plugin1 && "plugin2 is called before plugin1");
@@ -32,7 +31,6 @@ nulPlugin2.attributes = {
     name: "nulPlugin2"
   }
 };
-
 
 module.exports = {
   pageTitle: "test 1",

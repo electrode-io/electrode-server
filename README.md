@@ -35,12 +35,12 @@ For example, if you want to spin up a server with HTTP compression off at port 9
 
 ```js
 const config = {
-    connections: {
-        default: {
-            port: 9000,
-            compression: false
-        }
+  connections: {
+    default: {
+      port: 9000,
+      compression: false
     }
+  }
 };
 
 require("electrode-server")(config);
@@ -58,26 +58,25 @@ All properties are optional (if not present, the default values shown below will
 
 ### `server` (Object)
 
-   * Server options to pass to [Hapi's `Hapi.Server`]
+* Server options to pass to [Hapi's `Hapi.Server`]
 
-   * _default_
+* _default_
 
 ```js
 {
   server: {
     app: {
-      electrode: true
+      electrode: true;
     }
   }
 }
 ```
 
-
 ### `connections` (Object)
 
-   * Connections to setup for the Hapi server.  Each connection should be an object field and its key is used as the labels of the connection.
+* Connections to setup for the Hapi server. Each connection should be an object field and its key is used as the labels of the connection.
 
-   * _default_
+* _default_
 
 ```js
 {
@@ -94,9 +93,9 @@ All properties are optional (if not present, the default values shown below will
 
 ### `plugins` (Object)
 
-   * plugin registration objects, converted to an array of its values and passed to [Hapi's `server.register`]
+* plugin registration objects, converted to an array of its values and passed to [Hapi's `server.register`]
 
-   * _default_
+* _default_
 
 ```js
 {
@@ -105,20 +104,19 @@ All properties are optional (if not present, the default values shown below will
 }
 ```
 
-
 ### `listener` (function)
 
-   * A function to install event listeners for the electrode server startup lifecycle.
+* A function to install event listeners for the electrode server startup lifecycle.
 
-   * The following events are supported:
+* The following events are supported:
 
-       * `config-composed`    - All configurations have been composed into a single one
-       * `server-created`     - Hapi server created
-       * `connection-set`     - Connection set with `server.connection`
-       * `plugins-sorted`     - Plugins processed and sorted by priority
-       * `plugins-registered` - Plugins registered with Hapi
-       * `server-started`     - Server started
-       * `complete`           - Final step before returning
+  * `config-composed` - All configurations have been composed into a single one
+  * `server-created` - Hapi server created
+  * `connection-set` - Connection set with `server.connection`
+  * `plugins-sorted` - Plugins processed and sorted by priority
+  * `plugins-registered` - Plugins registered with Hapi
+  * `server-started` - Server started
+  * `complete` - Final step before returning
 
 To receive events you must provide an optional listener at construction time to electrodeServer.
 This can be included on the original configuration object. The data object will
@@ -139,24 +137,25 @@ myConfig.listener = (emitter) => {
 
 ### logLevel
 
-You can control how much output the Electrode Server logs to the console by setting the `logLevel` property in the config to "info" (the default if this is not specified at all), "warn" or "error". A level of "warn" means only warning and error messages will be printed.
+You can control how much output the Electrode Server logs to the console by setting the `logLevel` property in the config to "info" (the default if this is not specified at all), "warn", "error", or "none". A level of "warn" means only warning and error messages will be printed.
 
 ```js
 {
   electrode: {
-    logLevel: "warn" 
+    logLevel: "warn";
   }
 }
 ```
 
 So, for example, to suppress the handy informational banner that is shown when the server starts up:
+
 ```
 Hapi.js server running at http://mypc:4000
 ```
+
 set the logLevel to "warn" or "error".
 
-
- ## electrode-confippet
+## electrode-confippet
 
 To keep your environment specific configurations manageable, you can use [electrode-confippet].
 
@@ -197,13 +196,13 @@ the plugin's module to load for registration with Hapi.
 
 ### Plugin configs
 
-   * plugin field name - generally use as the name of the plugin module to load for registration
-   * `module` - name of the module to load for the plugin instead of the field name
-   * `enable` - if set to `false` then this plugin won't be registered.  If it's not set then it's considered to be `true`.
-   * `options` - Object that's passed to the plugin's register function.
-   * `priority` - integer value to indicate the plugin's registration order
-      * Lower value ones are register first
-      * Default to `Infinity` if this field is missing or has no valid integer value (`NaN`) (string of number accepted)
+* plugin field name - generally use as the name of the plugin module to load for registration
+* `module` - name of the module to load for the plugin instead of the field name
+* `enable` - if set to `false` then this plugin won't be registered. If it's not set then it's considered to be `true`.
+* `options` - Object that's passed to the plugin's register function.
+* `priority` - integer value to indicate the plugin's registration order
+  * Lower value ones are register first
+  * Default to `Infinity` if this field is missing or has no valid integer value (`NaN`) (string of number accepted)
 
 #### About Plugin Priority
 
@@ -214,9 +213,9 @@ Priority allows you to arrange plugins to be registered in an order you prefer. 
 If a plugin's field name is not desired as its module name, then you can optionally specify one of the following
 to provide the plugin's module for registration:
 
-   * `register` - if specified, then treat as the plugin's `register` function to pass to Hapi, ***overides module***
-   * `module` - if specified and `register` is not, then treat it as the name of the plugin module to load for registration.
-      * If you absolutely do not want electrode server to try loading any module for this plugin, then set `module` to false.
+* `register` - if specified, then treat as the plugin's `register` function to pass to Hapi, **_overides module_**
+* `module` - if specified and `register` is not, then treat it as the name of the plugin module to load for registration.
+  * If you absolutely do not want electrode server to try loading any module for this plugin, then set `module` to false.
 
 ## API
 
@@ -226,22 +225,22 @@ The electrode server exports a single API.
 
 `electrodeServer(config, [decors], [callback])`
 
-   * `config` is the [electrode server config](#configuration-options)
-   * `callback` is an optional errback with the signature `function (err, server)`
-      * where `server` is the Hapi server
-   * `decors` - Optional extra `config` or array of `config`.  In case you have common config you want to put inside a dedicated module, you can pass them in here.
-      * If it's an array like `[ decor1, decor2, decor3 ]` then they are composed from left to right. Rightmost will be the final value when there's overlapping.
-      * The final decor is then composed into electrode-server's defaults before applying `config`.
-   * Returns a promise resolving to the Hapi server if callback is not provided
+* `config` is the [electrode server config](#configuration-options)
+* `callback` is an optional errback with the signature `function (err, server)`
+  * where `server` is the Hapi server
+* `decors` - Optional extra `config` or array of `config`. In case you have common config you want to put inside a dedicated module, you can pass them in here.
+  * If it's an array like `[ decor1, decor2, decor3 ]` then they are composed from left to right. Rightmost will be the final value when there's overlapping.
+  * The final decor is then composed into electrode-server's defaults before applying `config`.
+* Returns a promise resolving to the Hapi server if callback is not provided
 
 ## License
 
 Built with :heart: by [Team Electrode](https://github.com/orgs/electrode-io/people) @WalmartLabs.
 
 [electrode-confippet]: https://www.npmjs.com/package/electrode-confippet
-[Hapi crumb plugin]: https://github.com/hapijs/crumb
-[Hapi's `Hapi.Server`]: http://hapijs.com/api#new-serveroptions
-[Hapi's `server.register`]: http://hapijs.com/api#serverregisterplugins-options-callback
+[hapi crumb plugin]: https://github.com/hapijs/crumb
+[hapi's `hapi.server`]: http://hapijs.com/api#new-serveroptions
+[hapi's `server.register`]: http://hapijs.com/api#serverregisterplugins-options-callback
 [configuration files setup]: https://www.npmjs.com/package/electrode-confippet#configuration-files
 [npm-image]: https://badge.fury.io/js/electrode-server.svg
 [npm-url]: https://npmjs.org/package/electrode-server

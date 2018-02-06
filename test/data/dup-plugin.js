@@ -19,7 +19,6 @@ module.exports = {
     plugin2: {
       register: nulPlugin
     }
-
   },
   server: {
     app: {

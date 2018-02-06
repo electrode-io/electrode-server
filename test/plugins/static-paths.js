@@ -8,7 +8,7 @@ const _ = require("lodash");
 // js, images, and html under ${options.pathPrefix}.
 //
 
-const after = (options) => (server, next) => {
+const after = options => (server, next) => {
   let pathPrefix = "";
 
   if (options.pathPrefix) {
@@ -57,7 +57,6 @@ const after = (options) => (server, next) => {
 
   next();
 };
-
 
 const StaticPaths = (server, options, next) => {
   server.dependency("inert", after(options));

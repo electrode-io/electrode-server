@@ -2,112 +2,118 @@
 
 const Chai = require("chai");
 const logger = require("../../lib/logger.js");
+const sinon = require("sinon");
 
-describe("logger", function () {
+describe("logger", function() {
+  let sandbox;
+
+  before(() => {
+    sandbox = sinon.createSandbox();
+  });
+
+  after(() => {
+    sandbox.restore();
+  });
+
+  const stubConsole = m => {
+    const r = {};
+    r.stub = sandbox.stub(console, m).callsFake((a, b, c) => {
+      r.result = [a, b, c];
+    });
+    r.restore = () => r.stub.restore();
+    return r;
+  };
 
   describe("setLevel()", () => {
-
     it("throws an Error if it is passed an unknown level", () => {
-      Chai.expect(() => logger.setLevel("bogus"))
-        .to.throw("Log level must be one of info, warn, error. Received \"bogus\".");
+      Chai.expect(() => logger.setLevel("bogus")).to.throw(
+        `Log level must be one of info, warn, error, none. Received "bogus".`
+      );
     });
-
   });
 
   describe("info()", () => {
-
     it("logs an info message if the level is set to info", () => {
       logger.setLevel("info");
-      let result;
-      console.info = (...values) => {
-        result = values;
-      };
-
+      const stub = stubConsole("info");
       logger.info(1, 2, 3);
+      stub.restore();
 
-      Chai.expect(result).to.deep.equal([1, 2, 3]);
+      expect(stub.result).to.deep.equal([1, 2, 3]);
     });
 
     it("logs no info message if the level is set to warn", () => {
       logger.setLevel("warn");
-      let result;
-      console.info = (...values) => {
-        result = values;
-      };
 
+      const stub = stubConsole("info");
       logger.info(1, 2, 3);
+      stub.restore();
 
-      Chai.expect(result).to.be.undefined;
+      expect(stub.result).to.deep.equal(undefined);
     });
-
   });
 
   describe("warn()", () => {
-
     it("logs a warn message if the level is set to info", () => {
       logger.setLevel("info");
-      let result;
-      console.warn = (...values) => {
-        result = values;
-      };
 
+      const stub = stubConsole("warn");
       logger.warn(1, 2, 3);
+      stub.restore();
 
-      Chai.expect(result).to.deep.equal([1, 2, 3]);
+      expect(stub.result).to.deep.equal([1, 2, 3]);
     });
 
     it("logs a warn message if the level is set to warn", () => {
       logger.setLevel("warn");
-      let result;
-      console.warn = (...values) => {
-        result = values;
-      };
 
+      const stub = stubConsole("warn");
       logger.warn(1, 2, 3);
+      stub.restore();
 
-      Chai.expect(result).to.deep.equal([1, 2, 3]);
+      expect(stub.result).to.deep.equal([1, 2, 3]);
     });
 
     it("logs no warn message if the level is set to error", () => {
       logger.setLevel("error");
-      let result;
-      console.warn = (...values) => {
-        result = values;
-      };
 
+      const stub = stubConsole("warn");
       logger.warn(1, 2, 3);
+      stub.restore();
 
-      Chai.expect(result).to.be.undefined;
+      expect(stub.result).to.deep.equal(undefined);
     });
-
   });
 
   describe("error()", () => {
-
     it("logs an error message if the level is set to warn", () => {
       logger.setLevel("warn");
-      let result;
-      console.error = (...values) => {
-        result = values;
-      };
 
+      const stub = stubConsole("error");
       logger.error(1, 2, 3);
+      stub.restore();
 
-      Chai.expect(result).to.deep.equal([1, 2, 3]);
+      expect(stub.result).to.deep.equal([1, 2, 3]);
     });
 
     it("logs an error message if the level is set to error", () => {
       logger.setLevel("error");
-      let result;
-      console.error = (...values) => {
-        result = values;
-      };
 
+      const stub = stubConsole("error");
       logger.error(1, 2, 3);
+      stub.restore();
 
-      Chai.expect(result).to.deep.equal([1, 2, 3]);
+      expect(stub.result).to.deep.equal([1, 2, 3]);
     });
 
-  });
+    it("logs no error message if the level is set to none", () => {
+      logger.setLevel("none");
 
+      const stub = stubConsole("error");
+      logger.error(1, 2, 3);
+      stub.restore();
+
+      expect(stub.result).to.deep.equal(undefined);
+    });
+  });
 });

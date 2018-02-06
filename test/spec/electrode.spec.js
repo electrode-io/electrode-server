@@ -9,8 +9,7 @@ const Promise = require("bluebird");
 
 const HTTP_404 = 404;
 
-describe("electrode-server", function () {
-
+describe("electrode-server", function() {
   this.timeout(10000);
 
   beforeEach(() => {
@@ -21,32 +20,35 @@ describe("electrode-server", function () {
     delete process.env.PORT;
   });
 
-  const stopServer = (server) =>
+  const stopServer = server =>
     new Promise((resolve, reject) =>
-      server.stop((stopErr) => {
+      server.stop(stopErr => {
         return stopErr ? reject(stopErr) : resolve();
-      }));
+      })
+    );
 
-  const verifyServer = (server) => new Promise((resolve) => {
-    assert(server.settings.app.config, "server.settings.app.config not available");
-    assert(server.app.config, "server.app.config not available");
-    request.get(`http://localhost:${server.info.port}/html/test.html`).end((err, resp) => {
-      assert.equal(err.message, "Not Found");
-      assert.equal(err.status, HTTP_404);
-      assert.ok(resp, "No response from server");
-      assert.ok(resp.body, "Response has no body");
-      assert.equal(resp.body.error, "Not Found");
-      assert.equal(resp.body.statusCode, HTTP_404);
-      resolve(server);
-    });
-  })
-    .catch((err) => {
+  const verifyServer = server =>
+    new Promise(resolve => {
+      assert(server.settings.app.config, "server.settings.app.config not available");
+      assert(server.app.config, "server.app.config not available");
+      request.get(`http://localhost:${server.info.port}/html/test.html`).end((err, resp) => {
+        assert.equal(err.message, "Not Found");
+        assert.equal(err.status, HTTP_404);
+        assert.ok(resp, "No response from server");
+        assert.ok(resp.body, "Response has no body");
+        assert.equal(resp.body.error, "Not Found");
+        assert.equal(resp.body.statusCode, HTTP_404);
+        resolve(server);
+      });
+    }).catch(err => {
       stopServer(server);
       throw err;
     });
 
   const testSimplePromise = (config, decors) =>
-    electrodeServer(config, decors).then(verifyServer).then(stopServer);
+    electrodeServer(config, decors)
+      .then(verifyServer)
+      .then(stopServer);
 
   const testSimpleCallback = () =>
     new Promise((resolve, reject) => {
@@ -57,25 +59,29 @@ describe("electrode-server", function () {
       .then(verifyServer)
       .then(stopServer);
 
-  it("should start up a default server twice", function () {
-    return testSimplePromise({
-      electrode: {
-        hostname: "blah-test-923898234" // test bad hostname
-      }
-    }, [require("../decor/decor1.js")])
-      .then(() => testSimplePromise(undefined, require("../decor/decor2")));
+  it("should start up a default server twice", function() {
+    return testSimplePromise(
+      {
+        electrode: {
+          hostname: "blah-test-923898234" // test bad hostname
+        }
+      },
+      [require("../decor/decor1.js")]
+    ).then(() => testSimplePromise(undefined, require("../decor/decor2")));
   });
 
-  it("should start up a server twice @callbacks", function () {
-    return testSimpleCallback().then(testSimpleCallback).then();
+  it("should start up a server twice @callbacks", function() {
+    return testSimpleCallback()
+      .then(testSimpleCallback)
+      .then();
   });
 
   const expectedError = () => {
     assert(false, "expected error from tested code");
   };
 
-  it("should fail for PORT in use", function () {
-    return electrodeServer().then((server) =>
+  it("should fail for PORT in use", function() {
+    return electrodeServer().then(server =>
       electrodeServer({
         connections: {
           default: {
@@ -84,7 +90,7 @@ describe("electrode-server", function () {
         }
       })
         .then(expectedError)
-        .catch((err) => {
+        .catch(err => {
           if (_.includes(err.message, "is already in use")) {
             return stopServer(server);
           }
@@ -93,20 +99,20 @@ describe("electrode-server", function () {
     );
   });
 
-  it("should fail for listener errors", function () {
+  it("should fail for listener errors", function() {
     return electrodeServer({}, require("../decor/decor3"))
       .then(expectedError)
-      .catch((err) => {
+      .catch(err => {
         expect(err.message).includes("test listner error");
       });
   });
 
-  it("should start up with @empty_config", function () {
+  it("should start up with @empty_config", function() {
     return electrodeServer().then(stopServer);
   });
 
-  it("should start up with @correct_plugins_priority", function () {
-    const verify = (server) => {
+  it("should start up with @correct_plugins_priority", function() {
+    const verify = server => {
       assert.ok(server.plugins.testPlugin, "testPlugin missing in server");
       assert.ok(server.plugins.es6StylePlugin, "es6StylePlugin missing in server");
       return server;
@@ -116,18 +122,17 @@ describe("electrode-server", function () {
       .then(stopServer);
   });
 
-  it("should return static file", function () {
+  it("should return static file", function() {
     let server;
-    const verifyServerStatic = (s) => new Promise((resolve) => {
-      server = s;
-      request.get(`http://localhost:${s.info.port}/html/hello.html`)
-        .end((err, resp) => {
+    const verifyServerStatic = s =>
+      new Promise(resolve => {
+        server = s;
+        request.get(`http://localhost:${s.info.port}/html/hello.html`).end((err, resp) => {
           assert(resp, "Server didn't return response");
-          assert(_.includes(resp.text, "Hello Test!"),
-            "response not contain expected string");
+          assert(_.includes(resp.text, "Hello Test!"), "response not contain expected string");
           resolve(server);
         });
-    });
+      });
 
     const config = {
       plugins: {
@@ -148,31 +153,30 @@ describe("electrode-server", function () {
       .finally(() => stopServer(server));
   });
 
-  it("should fail start up due to @plugin_error", function () {
+  it("should fail start up due to @plugin_error", function() {
     return electrodeServer(require("../data/plugin-err.js"))
       .then(expectedError)
-      .catch((e) => {
+      .catch(e => {
         if (!_.includes(e._err.message, "plugin_failure")) {
           throw e;
         }
       });
   });
 
-
-  it("should fail start up due to @bad_plugin", function () {
+  it("should fail start up due to @bad_plugin", function() {
     return electrodeServer(require("../data/bad-plugin.js"))
       .then(expectedError)
-      .catch((e) => {
+      .catch(e => {
         if (!_.includes(e._err.message, "Failed loading module ./test/plugins/err-plugin")) {
           throw e;
         }
       });
   });
 
-  it("should fail start up due to @duplicate_plugin", function () {
+  it("should fail start up due to @duplicate_plugin", function() {
     return electrodeServer(require("../data/dup-plugin.js"))
       .then(expectedError)
-      .catch((e) => {
+      .catch(e => {
         if (!_.includes(e.message, "error starting the Hapi.js server")) {
           throw e;
         }
@@ -180,9 +184,8 @@ describe("electrode-server", function () {
   });
 
   it("should fail with plugins register timeout", () => {
-    const register = () => {
-    };
-    register.attributes = {name: "timeout"};
+    const register = () => {};
+    register.attributes = { name: "timeout" };
     return electrodeServer({
       plugins: {
         test: {
@@ -194,8 +197,13 @@ describe("electrode-server", function () {
       }
     })
       .then(expectedError)
-      .catch((e) => {
-        if (!_.includes(e._err.message, "Electrode Server register plugins timeout.  Did you forget next")) {
+      .catch(e => {
+        if (
+          !_.includes(
+            e._err.message,
+            "Electrode Server register plugins timeout.  Did you forget next"
+          )
+        ) {
           throw e;
         }
       });
@@ -205,7 +213,7 @@ describe("electrode-server", function () {
     const register = (server, options, next) => {
       next(new Error("test plugin register error"));
     };
-    register.attributes = {name: "errorPlugin"};
+    register.attributes = { name: "errorPlugin" };
     return electrodeServer({
       plugins: {
         test: {
@@ -214,53 +222,55 @@ describe("electrode-server", function () {
       }
     })
       .then(expectedError)
-      .catch((e) => {
+      .catch(e => {
         if (!_.includes(e._err.message, "test plugin register error")) {
           throw e;
         }
       });
-
   });
 
   it("should load default config when no environment specified", () => {
-    return electrodeServer()
-      .then((server) => {
-        assert.equal(server.app.config.electrode.source, "development");
-        return stopServer(server);
-      });
+    return electrodeServer().then(server => {
+      assert.equal(server.app.config.electrode.source, "development");
+      return stopServer(server);
+    });
   });
 
   it("should load config based on environment", () => {
     process.env.NODE_ENV = "production";
 
-    return electrodeServer()
-      .then((server) => {
-        assert.equal(server.app.config.electrode.source, "production");
-        process.env.NODE_ENV = "test";
+    return electrodeServer().then(server => {
+      assert.equal(server.app.config.electrode.source, "production");
+      process.env.NODE_ENV = "test";
 
-        return stopServer(server);
-      });
+      return stopServer(server);
+    });
   });
 
   it("should skip env config that doesn't exist", () => {
     process.env.NODE_ENV = "development";
 
-    return electrodeServer()
-      .then((server) => {
-        assert.equal(server.app.config.electrode.source, "development");
-        process.env.NODE_ENV = "test";
+    return electrodeServer().then(server => {
+      assert.equal(server.app.config.electrode.source, "development");
+      process.env.NODE_ENV = "test";
 
-        return stopServer(server);
-      });
+      return stopServer(server);
+    });
   });
 
-  it("should emit lifecycle events", function () {
-    const events = ["config-composed", "server-created", "plugins-sorted",
-      "plugins-registered", "server-started", "complete"];
+  it("should emit lifecycle events", function() {
+    const events = [
+      "config-composed",
+      "server-created",
+      "plugins-sorted",
+      "plugins-registered",
+      "server-started",
+      "complete"
+    ];
 
     const firedEvents = _.times(events.length, _.constant(false));
 
-    const eventListener = (emitter) => {
+    const eventListener = emitter => {
       _.each(events, (event, index) => {
         emitter.on(event, (data, next) => {
           firedEvents[index] = true;
@@ -278,42 +288,39 @@ describe("electrode-server", function () {
       listener: eventListener
     };
 
-    return electrodeServer(options)
-      .then((server) => {
-        assert(firedEvents.indexOf(false) === -1, "failed to fire event.");
-        return stopServer(server);
-      });
+    return electrodeServer(options).then(server => {
+      assert(firedEvents.indexOf(false) === -1, "failed to fire event.");
+      return stopServer(server);
+    });
   });
 
   it("displays a startup banner at startup time", () => {
     const i = console.info;
     let msg;
-    console.info = (m) => {
+    console.info = m => {
       msg = m;
     };
-    return electrodeServer()
-      .then((server) => {
-        console.info = i;
-        assert.include(msg, "Hapi.js server running");
-        return stopServer(server);
-      });
+    return electrodeServer().then(server => {
+      console.info = i;
+      assert.include(msg, "Hapi.js server running");
+      return stopServer(server);
+    });
   });
 
   it("displays no startup banner at startup time if logLevel is set to something other than info", () => {
     const i = console.info;
     let msg;
-    console.info = (m) => {
+    console.info = m => {
       msg = m;
     };
     return electrodeServer({
       electrode: {
         logLevel: "warn"
       }
-    })
-      .then((server) => {
-        console.info = i;
-        assert.isUndefined(msg);
-        return stopServer(server);
-      });
+    }).then(server => {
+      console.info = i;
+      assert.isUndefined(msg);
+      return stopServer(server);
+    });
   });
 });
