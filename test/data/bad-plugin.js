@@ -7,5 +7,8 @@ module.exports = {
     errPlugin: {
       module: "./test/plugins/err-plugin"
     }
+  },
+  electrode: {
+    logLevel: "none"
   }
 };

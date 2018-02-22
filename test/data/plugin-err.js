@@ -23,5 +23,8 @@ module.exports = {
         test2: true
       }
     }
+  },
+  electrode: {
+    logLevel: "none"
   }
 };
