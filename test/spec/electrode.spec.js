@@ -10,6 +10,8 @@ const Promise = require("bluebird");
 const HTTP_404 = 404;
 
 describe("electrode-server", function() {
+  const logLevel = "none";
+
   this.timeout(10000);
 
   beforeEach(() => {
@@ -63,6 +65,7 @@ describe("electrode-server", function() {
     return testSimplePromise(
       {
         electrode: {
+          logLevel,
           hostname: "blah-test-923898234" // test bad hostname
         }
       },
@@ -76,34 +79,37 @@ describe("electrode-server", function() {
       .then();
   });
 
-  const expectedError = () => {
-    assert(false, "expected error from tested code");
-  };
-
   it("should fail for PORT in use", function() {
+    let error;
     return electrodeServer().then(server =>
       electrodeServer({
         connections: {
           default: {
             port: server.info.port
           }
+        },
+        electrode: {
+          logLevel
         }
       })
-        .then(expectedError)
-        .catch(err => {
-          if (_.includes(err.message, "is already in use")) {
+        .catch(e => (error = e))
+        .then(() => {
+          expect(error, "expected error thrown").to.exist;
+          if (_.includes(error.message, "is already in use")) {
             return stopServer(server);
           }
-          throw err;
+          throw error;
         })
     );
   });
 
   it("should fail for listener errors", function() {
+    let error;
     return electrodeServer({}, require("../decor/decor3"))
-      .then(expectedError)
-      .catch(err => {
-        expect(err.message).includes("test listner error");
+      .catch(e => (error = e))
+      .then(() => {
+        expect(error, "expected error thrown").to.exist;
+        expect(error.message).includes("test listner error");
       });
   });
 
@@ -154,31 +160,37 @@ describe("electrode-server", function() {
   });
 
   it("should fail start up due to @plugin_error", function() {
+    let error;
     return electrodeServer(require("../data/plugin-err.js"))
-      .then(expectedError)
-      .catch(e => {
-        if (!_.includes(e._err.message, "plugin_failure")) {
-          throw e;
+      .catch(e => (error = e))
+      .then(() => {
+        expect(error).to.exist;
+        if (!_.includes(error.message, "plugin_failure")) {
+          throw error;
         }
       });
   });
 
   it("should fail start up due to @bad_plugin", function() {
+    let error;
     return electrodeServer(require("../data/bad-plugin.js"))
-      .then(expectedError)
-      .catch(e => {
-        if (!_.includes(e._err.message, "Failed loading module ./test/plugins/err-plugin")) {
-          throw e;
+      .catch(e => (error = e))
+      .then(() => {
+        expect(error).to.exist;
+        if (!_.includes(error.message, "Failed loading module ./test/plugins/err-plugin")) {
+          throw error;
         }
       });
   });
 
   it("should fail start up due to @duplicate_plugin", function() {
+    let error;
     return electrodeServer(require("../data/dup-plugin.js"))
-      .then(expectedError)
-      .catch(e => {
-        if (!_.includes(e.message, "error starting the Hapi.js server")) {
-          throw e;
+      .catch(e => (error = e))
+      .then(() => {
+        expect(error).to.exist;
+        if (!_.includes(error.message, "error starting the Hapi.js server")) {
+          throw error;
         }
       });
   });
@@ -186,6 +198,7 @@ describe("electrode-server", function() {
   it("should fail with plugins register timeout", () => {
     const register = () => {};
     register.attributes = { name: "timeout" };
+    let error;
     return electrodeServer({
       plugins: {
         test: {
@@ -193,38 +206,69 @@ describe("electrode-server", function() {
         }
       },
       electrode: {
+        logLevel,
         registerPluginsTimeout: 5000
       }
     })
-      .then(expectedError)
-      .catch(e => {
+      .catch(e => (error = e))
+      .then(() => {
         if (
           !_.includes(
-            e._err.message,
+            error.message,
             "Electrode Server register plugins timeout.  Did you forget next"
           )
         ) {
-          throw e;
+          throw error;
         }
       });
   });
 
-  it("should fail if plugin register failed", () => {
+  it("should fail if plugin register returned error", () => {
     const register = (server, options, next) => {
-      next(new Error("test plugin register error"));
+      next(new Error("test plugin register returning error"));
     };
     register.attributes = { name: "errorPlugin" };
+    let error;
     return electrodeServer({
       plugins: {
         test: {
           register
         }
+      },
+      electrode: {
+        logLevel
       }
     })
-      .then(expectedError)
-      .catch(e => {
-        if (!_.includes(e._err.message, "test plugin register error")) {
-          throw e;
+      .catch(e => (error = e))
+      .then(() => {
+        expect(error).to.exist;
+        if (!_.includes(error.message, "test plugin register returning error")) {
+          throw error;
+        }
+      });
+  });
+
+  it("should fail if plugin register failed", () => {
+    const register = () => {
+      throw new Error("test plugin failure");
+    };
+    register.attributes = { name: "errorPlugin" };
+    let error;
+    return electrodeServer({
+      plugins: {
+        test: {
+          register
+        }
+      },
+      electrode: {
+        logLevel
+      }
+    })
+      .catch(e => (error = e))
+      .then(() => {
+        expect(error).to.exist;
+        if (!_.includes(error.message, "test plugin failure")) {
+          throw error;
         }
       });
   });
