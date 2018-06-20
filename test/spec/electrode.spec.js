@@ -215,7 +215,7 @@ describe("electrode-server", function() {
         if (
           !_.includes(
             error.message,
-            "Electrode Server register plugins timeout.  Did you forget next"
+            "electrode-server register plugin 'test' with register function timeout - did you forget next"
           )
         ) {
           throw error;
@@ -243,6 +243,27 @@ describe("electrode-server", function() {
       .then(() => {
         expect(error).to.exist;
         if (!_.includes(error.message, "test plugin register returning error")) {
+          throw error;
+        }
+      });
+  });
+
+  it("should fail if plugin with module register returned error", () => {
+    let error;
+    return electrodeServer({
+      plugins: {
+        test: {
+          module: path.join(__dirname, "../plugins/fail-plugin")
+        }
+      },
+      electrode: {
+        logLevel
+      }
+    })
+      .catch(e => (error = e))
+      .then(() => {
+        expect(error).to.exist;
+        if (!_.includes(error.message, "fail-plugin")) {
           throw error;
         }
       });
