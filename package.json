@@ -44,6 +44,9 @@
   "engines": {
     "node": ">= 4.2.2"
   },
+  "files": [
+    "lib"
+  ],
   "dependencies": {
     "electrode-confippet": "^1.2.10",
     "async-eventemitter": "^0.2.2",
