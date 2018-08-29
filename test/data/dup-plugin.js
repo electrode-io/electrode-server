@@ -1,23 +1,21 @@
 "use strict";
 
-function nulPlugin(server, options, next) {
-  next();
-}
-
-nulPlugin.attributes = {
-  pkg: {
-    name: "nulPlugin"
-  }
-};
+function nulPlugin() {}
 
 module.exports = {
   pageTitle: "test 1",
   plugins: {
     plugin1: {
-      register: nulPlugin
+      register: nulPlugin,
+      pkg: {
+        name: "nulPlugin"
+      }
     },
     plugin2: {
-      register: nulPlugin
+      register: nulPlugin,
+      pkg: {
+        name: "nulPlugin"
+      }
     }
   },
   server: {

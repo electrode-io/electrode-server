@@ -1,15 +1,13 @@
 "use strict";
 
-function testPlugin(server, options, next) {
+function testPlugin(server) {
   server.expose({});
-  return next();
 }
 
-testPlugin.attributes = {
+module.exports = {
+  register: testPlugin,
   pkg: {
     name: "testPlugin",
-    verrsion: "1.0.0"
+    version: "1.0.0"
   }
 };
-
-module.exports = testPlugin;

@@ -1,11 +1,10 @@
 "use strict";
 
-function register(server, options, next) {
-  next("fail-plugin");
+function register() {
+  throw new Error("fail-plugin");
 }
 
-register.attributes = {
+module.exports = {
+  register,
   name: "fail-plugin"
 };
-
-module.exports = register;

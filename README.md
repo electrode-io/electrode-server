@@ -9,7 +9,7 @@ The intention is that you will extend via configuration, such that this provides
 functionality of a Hapi web server, and within your own application you will add on the
 features, logic, etc unique to your situation.
 
-This module requires Node v4.2.x+.
+This module requires Node v8.x.x+.
 
 ## Installing
 
@@ -35,11 +35,9 @@ For example, if you want to spin up a server with HTTP compression off at port 9
 
 ```js
 const config = {
-  connections: {
-    default: {
-      port: 9000,
-      compression: false
-    }
+  connection: {
+    port: 9000,
+    compression: false
   }
 };
 
@@ -58,9 +56,9 @@ All properties are optional (if not present, the default values shown below will
 
 ### `server` (Object)
 
-* Server options to pass to [Hapi's `Hapi.Server`]
+- Server options to pass to [Hapi's `Hapi.Server`]
 
-* _default_
+- _default_
 
 ```js
 {
@@ -72,14 +70,32 @@ All properties are optional (if not present, the default values shown below will
 }
 ```
 
-### `connections` (Object)
+### `connection` (Object)
 
-* Connections to setup for the Hapi server. Each connection should be an object field and its key is used as the labels of the connection.
+- Connection to setup for the Hapi server. Contains connection details for the server.
+- If you want multiple connections, you can start multiple instances of `electrode-server`
 
-* _default_
+- _default_
 
 ```js
 {
+  connection: {
+    host: process.env.HOST,
+    address: process.env.HOST_IP || "0.0.0.0",
+    port: parseInt(process.env.PORT, 10) || 3000,
+    routes: {
+      cors: true
+    }
+  }
+}
+```
+
+`connections` Object in previous Electrode no longer supports multiple connections.
+Only the `default` is allowed.
+
+```js
+{
+  connections: {
     default: {
       host: process.env.HOST,
       address: process.env.HOST_IP || "0.0.0.0",
@@ -88,14 +104,15 @@ All properties are optional (if not present, the default values shown below will
         cors: true
       }
     }
+  }
 }
 ```
 
 ### `plugins` (Object)
 
-* plugin registration objects, converted to an array of its values and passed to [Hapi's `server.register`]
+- plugin registration objects, converted to an array of its values and passed to [Hapi's `server.register`]
 
-* _default_
+- _default_
 
 ```js
 {
@@ -106,17 +123,16 @@ All properties are optional (if not present, the default values shown below will
 
 ### `listener` (function)
 
-* A function to install event listeners for the electrode server startup lifecycle.
+- A function to install event listeners for the electrode server startup lifecycle.
 
-* The following events are supported:
+- The following events are supported:
 
-  * `config-composed` - All configurations have been composed into a single one
-  * `server-created` - Hapi server created
-  * `connection-set` - Connection set with `server.connection`
-  * `plugins-sorted` - Plugins processed and sorted by priority
-  * `plugins-registered` - Plugins registered with Hapi
-  * `server-started` - Server started
-  * `complete` - Final step before returning
+  - `config-composed` - All configurations have been composed into a single one
+  - `server-created` - Hapi server created
+  - `plugins-sorted` - Plugins processed and sorted by priority
+  - `plugins-registered` - Plugins registered with Hapi
+  - `server-started` - Server started
+  - `complete` - Final step before returning
 
 To receive events you must provide an optional listener at construction time to electrodeServer.
 This can be included on the original configuration object. The data object will
@@ -196,13 +212,13 @@ the plugin's module to load for registration with Hapi.
 
 ### Plugin configs
 
-* plugin field name - generally use as the name of the plugin module to load for registration
-* `module` - name of the module to load for the plugin instead of the field name
-* `enable` - if set to `false` then this plugin won't be registered. If it's not set then it's considered to be `true`.
-* `options` - Object that's passed to the plugin's register function.
-* `priority` - integer value to indicate the plugin's registration order
-  * Lower value ones are register first
-  * Default to `Infinity` if this field is missing or has no valid integer value (`NaN`) (string of number accepted)
+- plugin field name - generally use as the name of the plugin module to load for registration
+- `module` - name of the module to load for the plugin instead of the field name
+- `enable` - if set to `false` then this plugin won't be registered. If it's not set then it's considered to be `true`.
+- `options` - Object that's passed to the plugin's register function.
+- `priority` - integer value to indicate the plugin's registration order
+  - Lower value ones are register first
+  - Default to `Infinity` if this field is missing or has no valid integer value (`NaN`) (string of number accepted)
 
 #### About Plugin Priority
 
@@ -213,9 +229,9 @@ Priority allows you to arrange plugins to be registered in an order you prefer. 
 If a plugin's field name is not desired as its module name, then you can optionally specify one of the following
 to provide the plugin's module for registration:
 
-* `register` - if specified, then treat as the plugin's `register` function to pass to Hapi, **_overides module_**
-* `module` - if specified and `register` is not, then treat it as the name of the plugin module to load for registration.
-  * If you absolutely do not want electrode server to try loading any module for this plugin, then set `module` to false.
+- `register` - if specified, then treat as the plugin's `register` function to pass to Hapi, **_overides module_**
+- `module` - if specified and `register` is not, then treat it as the name of the plugin module to load for registration.
+  - If you absolutely do not want electrode server to try loading any module for this plugin, then set `module` to false.
 
 ## API
 
@@ -225,13 +241,38 @@ The electrode server exports a single API.
 
 `electrodeServer(config, [decors], [callback])`
 
-* `config` is the [electrode server config](#configuration-options)
-* `callback` is an optional errback with the signature `function (err, server)`
-  * where `server` is the Hapi server
-* `decors` - Optional extra `config` or array of `config`. In case you have common config you want to put inside a dedicated module, you can pass them in here.
-  * If it's an array like `[ decor1, decor2, decor3 ]` then they are composed from left to right. Rightmost will be the final value when there's overlapping.
-  * The final decor is then composed into electrode-server's defaults before applying `config`.
-* Returns a promise resolving to the Hapi server if callback is not provided
+- `config` is the [electrode server config](#configuration-options)
+- `callback` is an optional errback with the signature `function (err, server)`
+  - where `server` is the Hapi server
+- `decors` - Optional extra `config` or array of `config`. In case you have common config you want to put inside a dedicated module, you can pass them in here.
+  - If it's an array like `[ decor1, decor2, decor3 ]` then they are composed from left to right. Rightmost will be the final value when there's overlapping.
+  - The final decor is then composed into electrode-server's defaults before applying `config`.
+- Returns a promise resolving to the Hapi server if callback is not provided
+
+## Contributions
+
+Make sure you sign the CLA. Checkout the [contribution guide](https://github.com/electrode-io/electrode/blob/master/CONTRIBUTING.md)
+
+To run tests
+
+```sh
+% npm i
+% clap test
+```
+
+To run tests and coverage
+
+```sh
+% clap check
+```
+
+To run sample server
+
+```sh
+% npm run sample
+```
+
+Hit `http://localhost:9000`
 
 ## License
 

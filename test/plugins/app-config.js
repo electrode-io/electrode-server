@@ -4,20 +4,17 @@
 // simple plugin to provide server.app.config in request.app.config
 //
 
-function appConfigPlugin(server, options, next) {
-  server.ext("onRequest", (request, reply) => {
+function appConfigPlugin(server) {
+  server.ext("onRequest", (request, h) => {
     request.app.config = server.app.config;
-    return reply.continue();
+    return h.continue;
   });
-
-  next();
 }
 
-appConfigPlugin.attributes = {
+module.exports = {
+  register: appConfigPlugin,
   pkg: {
     name: "appConfig",
     version: "1.0.0"
   }
 };
-
-module.exports = appConfigPlugin;

@@ -22,12 +22,7 @@ describe("electrode-server", function() {
     delete process.env.PORT;
   });
 
-  const stopServer = server =>
-    new Promise((resolve, reject) =>
-      server.stop(stopErr => {
-        return stopErr ? reject(stopErr) : resolve();
-      })
-    );
+  const stopServer = server => server.stop();
 
   const verifyServer = server =>
     new Promise(resolve => {
@@ -79,14 +74,42 @@ describe("electrode-server", function() {
       .then();
   });
 
+  it("should make default connections the connection", function() {
+    return electrodeServer({
+      connections: {
+        default: {
+          port: 9010
+        }
+      }
+    }).then(server => {
+      expect(server.info.port).eq(9010);
+      stopServer(server);
+    });
+  });
+
+  it("connections without default throws error", function() {
+    return electrodeServer({
+      connections: {
+        simple: {
+          port: 9011
+        }
+      }
+    })
+      .then(() => {
+        expect.fail("Should have failed");
+      })
+      .catch(err => {
+        expect(err).instanceof(Error);
+        expect(err.message).eq("`connections` config no longer supported");
+      });
+  });
+
   it("should fail for PORT in use", function() {
     let error;
     return electrodeServer().then(server =>
       electrodeServer({
-        connections: {
-          default: {
-            port: server.info.port
-          }
+        connection: {
+          port: server.info.port
         },
         electrode: {
           logLevel
@@ -189,20 +212,22 @@ describe("electrode-server", function() {
       .catch(e => (error = e))
       .then(() => {
         expect(error).to.exist;
-        if (!_.includes(error.message, "error starting the Hapi.js server")) {
+        if (!_.includes(error.message, "Plugin nulPlugin already registered")) {
           throw error;
         }
       });
   });
 
   it("should fail with plugins register timeout", () => {
-    const register = () => {};
-    register.attributes = { name: "timeout" };
+    const register = () => {
+      return new Promise(() => {});
+    };
     let error;
     return electrodeServer({
       plugins: {
         test: {
-          register
+          register,
+          name: "timeout"
         }
       },
       electrode: {
@@ -215,7 +240,7 @@ describe("electrode-server", function() {
         if (
           !_.includes(
             error.message,
-            "electrode-server register plugin 'test' with register function timeout - did you forget next"
+            "electrode-server register plugin 'test' with register function timeout - did you return a resolved promise?"
           )
         ) {
           throw error;
@@ -224,15 +249,15 @@ describe("electrode-server", function() {
   });
 
   it("should fail if plugin register returned error", () => {
-    const register = (server, options, next) => {
-      next(new Error("test plugin register returning error"));
+    const register = () => {
+      throw new Error("test plugin register returning error");
     };
-    register.attributes = { name: "errorPlugin" };
     let error;
     return electrodeServer({
       plugins: {
         test: {
-          register
+          register,
+          name: "errorPlugin"
         }
       },
       electrode: {
@@ -273,12 +298,12 @@ describe("electrode-server", function() {
     const register = () => {
       throw new Error("test plugin failure");
     };
-    register.attributes = { name: "errorPlugin" };
     let error;
     return electrodeServer({
       plugins: {
         test: {
-          register
+          register,
+          name: "errorPlugin"
         }
       },
       electrode: {
