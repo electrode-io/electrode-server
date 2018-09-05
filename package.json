@@ -6,7 +6,8 @@
   "scripts": {
     "prepublish": "which in-publish && if in-publish; then clap test; else echo not in publish; fi",
     "test": "clap test",
-    "coverage": "clap check"
+    "coverage": "clap check",
+    "sample": "node test/sample/index.js"
   },
   "repository": {
     "type": "git",
@@ -52,13 +53,13 @@
     "async-eventemitter": "^0.2.2",
     "bluebird": ">= 2.10.0 <= 3.x.x",
     "chalk": "^1.1.1",
-    "hapi": ">= 11.1.4 <= 16.x.x",
+    "hapi": "^17.5.0",
     "in-publish": "^2.0.0",
     "lodash": "^4.5.1"
   },
   "devDependencies": {
     "electrode-archetype-njs-module-dev": "^3.0.0",
-    "inert": "^4.0.1",
+    "inert": "^5.1.0",
     "intercept-stdout": "^0.1.2",
     "mitm": "^1.2.0",
     "superagent": "^2.1.0"

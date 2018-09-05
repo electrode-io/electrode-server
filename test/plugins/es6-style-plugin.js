@@ -1,15 +1,13 @@
 "use strict";
 
-function es6StylePlugin(server, options, next) {
+function es6StylePlugin(server) {
   server.expose({});
-  return next();
 }
 
-es6StylePlugin.attributes = {
+module.exports.default = {
+  register: es6StylePlugin,
   pkg: {
     name: "es6StylePlugin",
-    verrsion: "1.0.0"
+    version: "1.0.0"
   }
 };
-
-module.exports.default = es6StylePlugin;

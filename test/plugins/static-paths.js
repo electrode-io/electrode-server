@@ -8,7 +8,7 @@ const _ = require("lodash");
 // js, images, and html under ${options.pathPrefix}.
 //
 
-const after = options => (server, next) => {
+const after = options => server => {
   let pathPrefix = "";
 
   if (options.pathPrefix) {
@@ -21,8 +21,7 @@ const after = options => (server, next) => {
 
   const config = _.merge({}, options.config);
 
-  const connection = server.select("default");
-  connection.route([
+  server.route([
     {
       method: "GET",
       path: "/js/{param*}",
@@ -54,20 +53,16 @@ const after = options => (server, next) => {
       config
     }
   ]);
-
-  next();
 };
 
-const StaticPaths = (server, options, next) => {
+const StaticPaths = (server, options) => {
   server.dependency("inert", after(options));
-  next();
 };
 
-StaticPaths.attributes = {
+module.exports = {
+  register: StaticPaths,
   pkg: {
     name: "electrodeServerStaticPaths",
     version: "1.0.0"
   }
 };
-
-module.exports = StaticPaths;
