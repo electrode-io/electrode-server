@@ -137,4 +137,5 @@ node_modules
 
 .tmp
 .nyc_output
-package-lock.json
+*-lock.*
+.vscode

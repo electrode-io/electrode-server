@@ -1,7 +1,5 @@
 "use strict";
 
-const path = require("path");
-
 module.exports = {
   plugins: {
     inert: {
@@ -11,7 +9,10 @@ module.exports = {
 
     staticPaths2: {
       priority: 120,
-      module: path.join(__dirname, `../plugins/static-paths.js`),
+      module: {
+        requireFromPath: __dirname,
+        name: `../plugins/static-paths.js`
+      },
       options: {
         pathPrefix: "",
         config: {}

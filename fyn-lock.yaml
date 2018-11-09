@@ -1653,6 +1653,13 @@ regexpp:
  1.1.0:
   $: sha512-LOPw8FpgdQF9etWMaAfG/WRthIdXJGYp4mJ2Jgn/2lpkbod9jPn0t9UqN7AxBOKNfzRbYyVfgc7Vk4t/MpnXgw==
   _: 'https://registry.npmjs.org/regexpp/-/regexpp-1.1.0.tgz'
+require-at:
+ _:
+  ^1.0.1: 1.0.1
+ 1.0.1:
+  top: 1
+  $: sha512-8sOlHdQyGD03PqrpKIeUyXgYPKGLck0kEhMRClEsSby3quv/lWdsivKFO7S2+3Zusq22dZ0d8JZ9+A9WTs8p0w==
+  _: 'https://registry.npmjs.org/require-at/-/require-at-1.0.1.tgz'
 require-uncached:
  _:
   ^1.0.3: 1.0.3
@@ -1772,6 +1779,7 @@ sinon:
  _:
   ^4.0.1: 4.5.0
  4.5.0:
+  hasI: 1
   $: sha512-trdx+mB0VBBgoYucy6a9L7/jfQOmvGeaKZT4OOJ+lPAtI8623xyGr8wLiE4eojzBS8G9yXbhx42GHUOVLr4X2w==
   _: 'http://registry.npmjs.org/sinon/-/sinon-4.5.0.tgz'
   dependencies:
