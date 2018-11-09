@@ -159,6 +159,21 @@ describe("electrode-server", function() {
       .finally(() => stopServer(server));
   });
 
+  it("should fail for invalid plugin spec", function() {
+    let error;
+    return electrodeServer({
+      electrode: { logLevel: "none" },
+      plugins: { invalid: { module: false } }
+    })
+      .catch(e => (error = e))
+      .then(() => {
+        expect(error).to.exist;
+        expect(error.message).contains(
+          `plugin invalid disable 'module' but has no 'register' field`
+        );
+      });
+  });
+
   it("should fail start up due to @plugin_error", function() {
     let error;
     return electrodeServer(require("../data/plugin-err.js"))
