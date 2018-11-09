@@ -213,9 +213,21 @@ Priority allows you to arrange plugins to be registered in an order you prefer. 
 If a plugin's field name is not desired as its module name, then you can optionally specify one of the following
 to provide the plugin's module for registration:
 
-* `register` - if specified, then treat as the plugin's `register` function to pass to Hapi, **_overides module_**
-* `module` - if specified and `register` is not, then treat it as the name of the plugin module to load for registration.
-  * If you absolutely do not want electrode server to try loading any module for this plugin, then set `module` to false.
+- `register` - if specified, then treat as the plugin's `register` function to pass to Hapi, **_overides module_**
+- `module` - Only used if `register` is not specified
+  - If it's a string then treat it as the name of the plugin module to load for registration.
+  - If you absolutely do not want electrode server to try loading any module for this plugin, then set `module` to `false`.
+  - You can specify a require from path for the module using an object.
+
+```js
+{
+  plugins: {
+    myPlugin: {
+      module: { requireFromPath: process.cwd(), name: "my-plugin-module" }
+    }
+  }
+}
+```
 
 ## API
 
