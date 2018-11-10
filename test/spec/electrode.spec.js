@@ -136,6 +136,56 @@ describe("electrode-server", function() {
       });
   });
 
+  it("should fail if plugins.requireFromPath is not string", function() {
+    let error;
+    return electrodeServer({ electrode: { logLevel: "none" }, plugins: { requireFromPath: {} } })
+      .catch(e => (error = e))
+      .then(() => {
+        expect(error).to.exist;
+        expect(error.message).contains("config.plugins.requireFromPath must be a string");
+      });
+  });
+
+  it("should fail if can't load module from requireFromPath", function() {
+    let error;
+    return electrodeServer({
+      electrode: { logLevel: "none" },
+      plugins: {
+        requireFromPath: "/tmp",
+        inert: {}
+      }
+    })
+      .catch(e => (error = e))
+      .then(() => {
+        expect(error).to.exist;
+        expect(error.message).contains(
+          "Failed loading module inert from path: /tmp: Cannot find module 'inert'"
+        );
+      });
+  });
+
+  it("should fail if can't load module from module.requireFromPath", function() {
+    let error;
+    return electrodeServer({
+      electrode: { logLevel: "none" },
+      plugins: {
+        inert: {
+          module: {
+            requireFromPath: "/tmp",
+            name: "inert"
+          }
+        }
+      }
+    })
+      .catch(e => (error = e))
+      .then(() => {
+        expect(error).to.exist;
+        expect(error.message).contains(
+          "Failed loading module inert from path: /tmp: Cannot find module 'inert'"
+        );
+      });
+  });
+
   it("should start up with @empty_config", function() {
     return electrodeServer().then(stopServer);
   });
@@ -294,6 +344,28 @@ describe("electrode-server", function() {
       plugins: {
         test: {
           module: path.join(__dirname, "../plugins/fail-plugin")
+        }
+      },
+      electrode: {
+        logLevel
+      }
+    })
+      .catch(e => (error = e))
+      .then(() => {
+        expect(error).to.exist;
+        if (!_.includes(error.message, "fail-plugin")) {
+          throw error;
+        }
+      });
+  });
+
+  it("should fail if plugin with requireFromPath and module register returned error", () => {
+    let error;
+    return electrodeServer({
+      plugins: {
+        test: {
+          requireFromPath: __dirname,
+          module: "../plugins/fail-plugin"
         }
       },
       electrode: {
