@@ -285,7 +285,9 @@ describe("electrode-server", function() {
 
   it("should fail with plugins register timeout", () => {
     const register = () => {
-      return new Promise(() => {});
+      return new Promise(() => {
+        // never resolves or rejects
+      });
     };
     let error;
     return electrodeServer({
@@ -297,7 +299,7 @@ describe("electrode-server", function() {
       },
       electrode: {
         logLevel,
-        registerPluginsTimeout: 5000
+        registerPluginsTimeout: 100
       }
     })
       .catch(e => (error = e))
@@ -305,7 +307,7 @@ describe("electrode-server", function() {
         if (
           !_.includes(
             error.message,
-            "electrode-server register plugin 'test' with register function timeout - did you return a resolved promise?"
+            "failed registering your plugin 'test' with register function\ntimeout - did you return a resolved promise?"
           )
         ) {
           throw error;
@@ -469,6 +471,77 @@ describe("electrode-server", function() {
       assert(firedEvents.indexOf(false) === -1, "failed to fire event.");
       return stopServer(server);
     });
+  });
+
+  it("should handle event handler timeout error", function() {
+    const eventListener = emitter => {
+      emitter.on("plugins-sorted", (data, next) => {}); // eslint-disable-line
+    };
+
+    const options = {
+      electrode: { logLevel, eventTimeout: 20 },
+      listener: eventListener
+    };
+
+    let error;
+    return electrodeServer(options)
+      .catch(e => (error = e))
+      .then(() => {
+        expect(error).to.exist;
+        expect(error.code).to.equal("XEVENT_TIMEOUT");
+      });
+  });
+
+  it("should handle event handler error", function() {
+    const eventListener = emitter => {
+      emitter.on("plugins-sorted", (data, next) => {
+        next(new Error("oops"));
+      });
+    };
+
+    const options = {
+      electrode: { logLevel, eventTimeout: 20 },
+      listener: eventListener
+    };
+
+    let error;
+    return electrodeServer(options)
+      .catch(e => (error = e))
+      .then(() => {
+        expect(error).to.exist;
+        expect(error.code).to.equal("XEVENT_FAILED");
+      });
+  });
+
+  it("should stop server if error occurred after it's started", () => {
+    let server;
+    let stopped;
+    const fakeStop = () => {
+      stopped = true;
+      return server._stop();
+    };
+    const eventListener = emitter => {
+      emitter.on("server-started", (data, next) => {
+        server = data.server;
+        server._stop = server.stop;
+        server.stop = fakeStop;
+        next(new Error("test"));
+      });
+    };
+
+    const options = {
+      electrode: { logLevel },
+      listener: eventListener
+    };
+
+    let error;
+    return electrodeServer(options)
+      .catch(e => (error = e))
+      .then(() => {
+        expect(error).to.exist;
+        expect(stopped).to.equal(true);
+        expect(error.code).to.equal("XEVENT_FAILED");
+      });
   });
 
   it("displays a startup banner at startup time", () => {
