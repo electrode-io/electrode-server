@@ -4,7 +4,7 @@
   "description": "A configurable Hapi web server",
   "main": "lib/electrode-server.js",
   "scripts": {
-    "prepublish": "which in-publish && if in-publish; then clap test; else echo not in publish; fi",
+    "prepublishOnly": "clap test",
     "test": "clap test",
     "coverage": "clap check"
   },
@@ -53,8 +53,7 @@
     "chalk": "^1.1.1",
     "electrode-confippet": "^1.5.0",
     "hapi": ">= 11.1.4 <= 16.x.x",
-    "in-publish": "^2.0.0",
-    "lodash": "^4.5.1",
+    "lodash": "^4.17.11",
     "require-at": "^1.0.1"
   },
   "devDependencies": {
