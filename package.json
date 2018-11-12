@@ -3,6 +3,9 @@
   "version": "1.6.0",
   "description": "A configurable Hapi web server",
   "main": "lib/electrode-server.js",
+  "publishConfig": {
+    "tag": "ver1"
+  },
   "scripts": {
     "prepublishOnly": "clap test",
     "test": "clap test",
