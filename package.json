@@ -51,7 +51,7 @@
   "dependencies": {
     "async-eventemitter": "^0.2.2",
     "bluebird": ">= 2.10.0 <= 3.x.x",
-    "chalk": "^1.1.1",
+    "chalk": "^2.4.2",
     "electrode-confippet": "^1.2.10",
     "hapi": "^17.5.0",
     "lodash": "^4.17.11",
