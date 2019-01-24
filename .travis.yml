@@ -1,8 +1,11 @@
 language: node_js
-
 node_js:
   - v8
   - v10
-
-script:
-  - npm test
+script: fun test
+notifications:
+  email:
+    - joel123@gmail.com
+install: fyn --pg none
+before_install:
+  - npm install -g fyn
