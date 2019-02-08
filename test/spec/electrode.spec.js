@@ -289,6 +289,46 @@ describe("electrode-server", function() {
       });
   });
 
+  const testNoAbort = mode => {
+    const save = process.execArgv;
+    process.execArgv = [mode];
+
+    const register = (server, opts, next) => {
+      setTimeout(() => {
+        next(new Error("--- test timeout ---"));
+      }, 200);
+    };
+    register.attributes = { name: "timeout" };
+
+    let error;
+    return electrodeServer({
+      plugins: {
+        test: {
+          register
+        }
+      },
+      electrode: {
+        logLevel,
+        registerPluginsTimeout: 100
+      }
+    })
+      .catch(e => (error = e))
+      .then(() => {
+        expect(error.message).includes("--- test timeout ---");
+      })
+      .finally(() => {
+        process.execArgv = save;
+      });
+  };
+
+  it("should not abort with plugins register timeout in inspect mode", () => {
+    return testNoAbort("--inspect");
+  });
+
+  it("should not abort with plugins register timeout in inspect-brk mode", () => {
+    return testNoAbort("--inspect-brk");
+  });
+
   it("should fail if plugin register returned error", () => {
     const register = (server, options, next) => {
       next(new Error("test plugin register returning error"));
