@@ -1,3 +1,7 @@
+# 2.2.2 - 02/07/2019
+
+- avoid auto aborting in production mode, or inspect mode
+
 # 2.2.1 - 01/21/2019
 
 - dep: chalk@^2.4.2
