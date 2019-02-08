@@ -315,6 +315,48 @@ describe("electrode-server", function() {
       });
   });
 
+  const testNoAbort = mode => {
+    const save = process.execArgv;
+    process.execArgv = [mode];
+    const register = () => {
+      return new Promise(() => {
+        // never resolves or rejects
+      })
+        .timeout(200)
+        .catch(() => Promise.reject(new Error("--- test timeout ---")))
+        .then(() => Promise.reject(new Error("boom")));
+    };
+
+    let error;
+    return electrodeServer({
+      plugins: {
+        test: {
+          register,
+          name: "timeout"
+        }
+      },
+      electrode: {
+        logLevel,
+        registerPluginsTimeout: 100
+      }
+    })
+      .catch(e => (error = e))
+      .then(() => {
+        expect(error.message).includes("--- test timeout ---");
+      })
+      .finally(() => {
+        process.execArgv = save;
+      });
+  };
+
+  it("should not abort with plugins register timeout in inspect mode", () => {
+    return testNoAbort("--inspect");
+  });
+
+  it("should not abort with plugins register timeout in inspect-brk mode", () => {
+    return testNoAbort("--inspect-brk");
+  });
+
   it("should fail if plugin register returned error", () => {
     const register = () => {
       throw new Error("test plugin register returning error");
