@@ -7,7 +7,9 @@
     "prepublishOnly": "clap test",
     "test": "clap test",
     "coverage": "clap check",
-    "sample": "node test/sample/index.js"
+    "sample": "node test/sample/index.js",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "repository": {
     "type": "git",
@@ -55,7 +57,8 @@
     "electrode-confippet": "^1.2.10",
     "hapi": "^17.5.0",
     "lodash": "^4.17.11",
-    "require-at": "^1.0.1"
+    "require-at": "^1.0.1",
+    "snyk": "^1.192.4"
   },
   "devDependencies": {
     "electrode-archetype-njs-module-dev": "^3.0.0",
@@ -84,5 +87,6 @@
     "functions": 100,
     "lines": 100,
     "cache": true
-  }
+  },
+  "snyk": true
 }
