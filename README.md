@@ -11,7 +11,7 @@ features, logic, etc unique to your situation.
 
 This module requires Node v4.2.x+.
 
-# Table Of Contents
+## Table Of Contents
 
 - [Installing](#installing)
 - [Usage](#usage)
@@ -27,6 +27,7 @@ This module requires Node v4.2.x+.
   - [Plugin configs](#plugin-configs)
     - [About Plugin Priority](#about-plugin-priority)
     - [More about register and module](#more-about-register-and-module)
+    - [Exporting your Hapi Plugin from a module](#exporting-your-hapi-plugin-from-a-module)
     - [More about `requireFromPath`](#more-about-requirefrompath)
   - [Example: `crumb`](#example-crumb)
 - [API](#api)
@@ -255,6 +256,54 @@ If you don't want to use `<plugin-id>` to load the module, then you can optional
             }
           }
         }
+```
+
+#### Exporting your Hapi Plugin from a module
+
+Electrode server will try to find your Hapi Plugin from your module by looking through these fields:
+
+1. `mod.hapiPlugin`
+2. `mod.default.hapiPlugin`
+3. `mod.default`
+4. `mod` itself
+
+Examples:
+
+1. Exporting the plugin directly as the module:
+
+CommonJS example:
+
+```js
+module.exports = myHapiPlugin;
+```
+
+ES6 example:
+
+```js
+export default myHapiPlugin;
+```
+
+2. Exporting the plugin as a field named `hapiPlugin`:
+
+CommonJS example:
+
+```js
+module.exports.hapiPlugin = myHapiPlugin;
+```
+
+ES6 example:
+
+```js
+const hapiPlugin = myHapiPlugin;
+export hapiPlugin;
+```
+
+ES6 default:
+
+```js
+export default {
+  hapiPlugin: myHapiPlugin
+};
 ```
 
 #### More about `requireFromPath`
