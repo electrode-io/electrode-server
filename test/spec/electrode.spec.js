@@ -194,6 +194,8 @@ describe("electrode-server", function() {
     const verify = server => {
       assert.ok(server.plugins.testPlugin, "testPlugin missing in server");
       assert.ok(server.plugins.es6StylePlugin, "es6StylePlugin missing in server");
+      assert.ok(server.plugins.asHapiPlugin, "asHapiPlugin missing in server");
+      assert.ok(server.plugins.es6AsHapiPlugin, "es6AsHapiPlugin missing in server");
       return server;
     };
     return electrodeServer(require("../data/server.js"))
