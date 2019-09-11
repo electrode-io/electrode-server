@@ -67,6 +67,12 @@ module.exports = {
     },
     es6StylePlugin: {
       module: "./test/plugins/es6-style-plugin"
+    },
+    asHapiPlugin: {
+      module: "./test/plugins/as-hapi-plugin"
+    },
+    es6AsHapiPlugin: {
+      module: "./test/plugins/es6-as-hapi-plugin"
     }
   },
   server: {
