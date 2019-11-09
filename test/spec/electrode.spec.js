@@ -151,16 +151,15 @@ describe("electrode-server", function() {
     return electrodeServer({
       electrode: { logLevel: "none" },
       plugins: {
-        requireFromPath: "/tmp",
-        inert: {}
+        requireFromPath: "/",
+        "@hapi/inert": {}
       }
     })
       .catch(e => (error = e))
       .then(() => {
         expect(error).to.exist;
-        expect(error.message).contains(
-          "Failed loading module inert from path: /tmp: Cannot find module 'inert'"
-        );
+        expect(error.message).contains("Failed loading module @hapi/inert from path");
+        expect(error.message).contains("Cannot find module '@hapi/inert'");
       });
   });
 
@@ -169,9 +168,9 @@ describe("electrode-server", function() {
     return electrodeServer({
       electrode: { logLevel: "none" },
       plugins: {
-        inert: {
+        "@hapi/inert": {
           module: {
-            requireFromPath: "/tmp",
+            requireFromPath: "/",
             name: "inert"
           }
         }
@@ -180,9 +179,8 @@ describe("electrode-server", function() {
       .catch(e => (error = e))
       .then(() => {
         expect(error).to.exist;
-        expect(error.message).contains(
-          "Failed loading module inert from path: /tmp: Cannot find module 'inert'"
-        );
+        expect(error.message).contains("Failed loading module inert from path");
+        expect(error.message).contains("Cannot find module 'inert'");
       });
   });
 

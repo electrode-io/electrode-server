@@ -4,7 +4,7 @@ const path = require("path");
 
 module.exports = {
   plugins: {
-    inert: {},
+    "@hapi/inert": {},
     staticPaths: {
       enable: true,
       module: path.join(__dirname, "../plugins/static-paths"),

@@ -59,10 +59,10 @@
   },
   "devDependencies": {
     "electrode-archetype-njs-module-dev": "^3.0.0",
-    "inert": "^5.1.0",
+    "@hapi/inert": "^5.2.2",
     "intercept-stdout": "^0.1.2",
     "mitm": "^1.2.0",
-    "superagent": "^3.0.0"
+    "superagent": "^5.0.0"
   },
   "nyc": {
     "all": true,

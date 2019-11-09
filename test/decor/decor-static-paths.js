@@ -3,6 +3,7 @@
 module.exports = {
   plugins: {
     inert: {
+      module: "@hapi/inert",
       priority: 100,
       options: {}
     },
