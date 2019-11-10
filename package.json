@@ -58,10 +58,11 @@
     "require-at": "^1.0.1"
   },
   "devDependencies": {
-    "electrode-archetype-njs-module-dev": "^3.0.0",
     "@hapi/inert": "^5.2.2",
+    "electrode-archetype-njs-module-dev": "^3.0.0",
     "intercept-stdout": "^0.1.2",
     "mitm": "^1.2.0",
+    "run-verify": "^1.2.1",
     "superagent": "^5.0.0"
   },
   "nyc": {

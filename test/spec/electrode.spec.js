@@ -6,6 +6,7 @@ const assert = require("chai").assert;
 const _ = require("lodash");
 const request = require("superagent");
 const Promise = require("bluebird");
+const { asyncVerify, expectError } = require("run-verify");
 
 const HTTP_404 = 404;
 
@@ -127,13 +128,21 @@ describe("electrode-server", function() {
   });
 
   it("should fail for listener errors", function() {
-    let error;
-    return electrodeServer({}, require("../decor/decor3"))
-      .catch(e => (error = e))
-      .then(() => {
-        expect(error, "expected error thrown").to.exist;
+    return asyncVerify(
+      expectError(() => electrodeServer({}, require("../decor/decor3"))),
+      error => {
         expect(error.message).includes("test listner error");
-      });
+      }
+    );
+  });
+
+  it("should fail for listener errors from decor array with func", function() {
+    return asyncVerify(
+      expectError(() => electrodeServer({}, [require("../decor/decor4")])),
+      error => {
+        expect(error.message).includes("test listner error");
+      }
+    );
   });
 
   it("should fail if plugins.requireFromPath is not string", function() {
