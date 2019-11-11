@@ -5,8 +5,8 @@ const electrodeServer = require("../..");
 const assert = require("chai").assert;
 const _ = require("lodash");
 const request = require("superagent");
-const Promise = require("bluebird");
 const { asyncVerify, expectError } = require("run-verify");
+const xaa = require("xaa");
 
 const HTTP_404 = 404;
 
@@ -328,10 +328,13 @@ describe("electrode-server", function() {
     const save = process.execArgv;
     process.execArgv = [mode];
     const register = () => {
-      return new Promise(() => {
-        // never resolves or rejects
-      })
-        .timeout(200)
+      return xaa
+        .runTimeout(
+          new Promise(() => {
+            // never resolves or rejects
+          }),
+          200
+        )
         .catch(() => Promise.reject(new Error("--- test timeout ---")))
         .then(() => Promise.reject(new Error("boom")));
     };
