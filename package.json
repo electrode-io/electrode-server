@@ -49,7 +49,7 @@
     "lib"
   ],
   "dependencies": {
-    "@hapi/hapi": "^18.3.2",
+    "@hapi/hapi": "18.4.1",
     "async-eventemitter": "^0.2.2",
     "chalk": "^2.4.2",
     "electrode-confippet": "^1.2.10",
@@ -85,5 +85,8 @@
     "functions": 100,
     "lines": 100,
     "cache": true
+  },
+  "prettier": {
+    "printWidth": 100
   }
 }
