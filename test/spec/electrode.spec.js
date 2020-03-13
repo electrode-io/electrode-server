@@ -5,7 +5,7 @@ const electrodeServer = require("../..");
 const assert = require("chai").assert;
 const _ = require("lodash");
 const request = require("superagent");
-const { asyncVerify, expectError } = require("run-verify");
+const { asyncVerify, expectError, runFinally } = require("run-verify");
 const xaa = require("xaa");
 
 const HTTP_404 = 404;
@@ -88,6 +88,36 @@ describe("electrode-server", function() {
     });
   });
 
+  it("should pass plugin options", () => {
+    const options = {
+      test: "foo"
+    };
+
+    let receiveOptions;
+    const register = (server, opts) => {
+      receiveOptions = opts;
+    };
+    let server;
+
+    return asyncVerify(
+      () => {
+        return electrodeServer({
+          plugins: {
+            test1: {
+              register,
+              options
+            }
+          }
+        });
+      },
+      s => {
+        server = s;
+        expect(receiveOptions).to.deep.equal(options);
+      },
+      runFinally(() => server && server.stop())
+    );
+  });
+
   it("connections without default throws error", function() {
     return electrodeServer({
       connections: {
@@ -147,7 +177,10 @@ describe("electrode-server", function() {
 
   it("should fail if plugins.requireFromPath is not string", function() {
     let error;
-    return electrodeServer({ electrode: { logLevel: "none" }, plugins: { requireFromPath: {} } })
+    return electrodeServer({
+      electrode: { logLevel: "none" },
+      plugins: { requireFromPath: {} }
+    })
       .catch(e => (error = e))
       .then(() => {
         expect(error).to.exist;
@@ -280,16 +313,16 @@ describe("electrode-server", function() {
       });
   });
 
-  it("should fail start up due to @duplicate_plugin", function() {
-    let error;
-    return electrodeServer(require("../data/dup-plugin.js"))
-      .catch(e => (error = e))
-      .then(() => {
+  it("should fail start up due to @duplicate_plugin", () => {
+    return asyncVerify(
+      expectError(() => electrodeServer(require("../data/dup-plugin.js"))),
+      error => {
         expect(error).to.exist;
         if (!_.includes(error.message, "Plugin nulPlugin already registered")) {
           throw error;
         }
-      });
+      }
+    );
   });
 
   it("should fail with plugins register timeout", () => {
@@ -298,21 +331,23 @@ describe("electrode-server", function() {
         // never resolves or rejects
       });
     };
-    let error;
-    return electrodeServer({
-      plugins: {
-        test: {
-          register,
-          name: "timeout"
-        }
-      },
-      electrode: {
-        logLevel,
-        registerPluginsTimeout: 100
-      }
-    })
-      .catch(e => (error = e))
-      .then(() => {
+
+    return asyncVerify(
+      expectError(() => {
+        return electrodeServer({
+          plugins: {
+            test: {
+              register,
+              name: "timeout"
+            }
+          },
+          electrode: {
+            logLevel,
+            registerPluginsTimeout: 100
+          }
+        });
+      }),
+      error => {
         if (
           !_.includes(
             error.message,
@@ -321,7 +356,8 @@ describe("electrode-server", function() {
         ) {
           throw error;
         }
-      });
+      }
+    );
   });
 
   const testNoAbort = mode => {
