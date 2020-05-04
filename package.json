@@ -7,7 +7,9 @@
     "prepublishOnly": "clap test",
     "test": "clap test",
     "coverage": "clap check",
-    "sample": "node test/sample/index.js"
+    "sample": "node test/sample/index.js",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "repository": {
     "type": "git",
@@ -55,7 +57,8 @@
     "electrode-confippet": "^1.2.10",
     "lodash": "^4.17.11",
     "require-at": "^1.0.1",
-    "xaa": "^1.1.4"
+    "xaa": "^1.1.4",
+    "snyk": "^1.317.0"
   },
   "devDependencies": {
     "@hapi/inert": "^5.2.2",
@@ -88,5 +91,6 @@
   },
   "prettier": {
     "printWidth": 100
-  }
+  },
+  "snyk": true
 }
