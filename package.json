@@ -49,13 +49,13 @@
     "lib"
   ],
   "dependencies": {
-    "@hapi/hapi": "18.4.1",
-    "async-eventemitter": "^0.2.2",
-    "chalk": "^2.4.2",
-    "electrode-confippet": "^1.2.10",
-    "lodash": "^4.17.11",
-    "require-at": "^1.0.1",
-    "xaa": "^1.1.4"
+    "@hapi/hapi": "^18.4.1",
+    "async-eventemitter": "^0.2.4",
+    "chalk": "^4.0.0",
+    "electrode-confippet": "^1.5.0",
+    "lodash": "^4.17.15",
+    "require-at": "^1.0.4",
+    "xaa": "^1.5.0"
   },
   "devDependencies": {
     "@hapi/inert": "^5.2.2",
@@ -87,6 +87,8 @@
     "cache": true
   },
   "prettier": {
-    "printWidth": 100
+    "printWidth": 100,
+    "arrowParens": "avoid",
+    "trailingComma": "none"
   }
 }
