@@ -62,6 +62,7 @@
     "inert": "^5.1.0",
     "intercept-stdout": "^0.1.2",
     "mitm": "^1.2.0",
+    "prettier": "^1.19.1",
     "run-verify": "^1.2.2",
     "superagent": "^3.0.0"
   },
