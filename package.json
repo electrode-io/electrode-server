@@ -89,5 +89,8 @@
   },
   "prettier": {
     "printWidth": 100
+  },
+  "publishConfig": {
+    "tag": "ver2"
   }
 }
