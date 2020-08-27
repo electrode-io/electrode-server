@@ -9,3 +9,6 @@ notifications:
 install: fyn --pg none
 before_install:
   - npm install -g fyn
+addons:
+  hosts:
+    - dev.walmart.com

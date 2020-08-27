@@ -21,6 +21,7 @@ This module requires Node v8.x.x+.
   - [`connection` (Object)](#connection-object)
   - [`plugins` (Object)](#plugins-object)
   - [`listener` (function)](#listener-function)
+  - [`http2` (Object)](#http2-object)
   - [logLevel](#loglevel)
 - [electrode-confippet](#electrode-confippet)
 - [Adding a Hapi plugin](#adding-a-hapi-plugin)
@@ -176,6 +177,20 @@ myConfig.listener = (emitter) => {
 - Depending on the stage some may not be present. For example, `server` is not available until `server-created` event and `plugins` is not available until `plugins-sorted` event.
 
 - These are async events so you have to take and call a `next` callback.
+
+### `http2` (Object)
+
+To enable http2, set `http2.enable` to true. All options are passed to [`createSecureServer()`](https://nodejs.org/api/http2.html#http2_http2_createsecureserver_options_onrequesthandle).
+
+```js
+{
+  "http2": {
+    "enable": true,
+    "key": Fs.readFileSync('./ssl/site.key'),
+    "cert": Fs.readFileSync('./ssl/site.crt')
+  }
+}
+```
 
 ### logLevel
 
