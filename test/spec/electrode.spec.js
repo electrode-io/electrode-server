@@ -6,6 +6,9 @@ const assert = require("chai").assert;
 const _ = require("lodash");
 const request = require("superagent");
 const Promise = require("bluebird");
+const fs = require("fs");
+const http2 = require("http2");
+const { HTTP2_HEADER_PATH, HTTP2_HEADER_METHOD } = http2.constants;
 
 const HTTP_404 = 404;
 
@@ -615,6 +618,47 @@ describe("electrode-server", function() {
       console.info = i;
       assert.isUndefined(msg);
       return stopServer(server);
+    });
+  });
+
+  describe("http2", function() {
+    const verifyHttp2 = server => {
+      return new Promise((resolve, reject) => {
+        const client = http2.connect(`https://dev.walmart.com:${server.info.port}`, {
+          ca: fs.readFileSync(path.join(__dirname, "../data/server.crt"))
+        });
+        const req = client.request({
+          [HTTP2_HEADER_METHOD]: "GET",
+          [HTTP2_HEADER_PATH]: "/html/test.html",
+          rejectUnauthorized: false,
+          requestCert: true,
+          agent: false
+        });
+        let content = "";
+        req.on("data", chunk => {
+          content += chunk;
+        });
+        req.on("error", err => {
+          reject(err);
+        });
+        req.on("end", () => {
+          assert.equal(content, `{"statusCode":404,"error":"Not Found","message":"Not Found"}`);
+          client.close();
+          resolve(server);
+        });
+        req.end();
+      });
+    };
+    it("Test http2 connection", () => {
+      return electrodeServer({
+        http2: {
+          enable: true,
+          key: fs.readFileSync(path.join(__dirname, "../data/key.pem")),
+          cert: fs.readFileSync(path.join(__dirname, "../data/server.crt"))
+        }
+      })
+        .then(verifyHttp2)
+        .then(stopServer);
     });
   });
 });
