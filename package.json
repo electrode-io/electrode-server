@@ -1,6 +1,6 @@
 {
   "name": "electrode-server",
-  "version": "2.3.0",
+  "version": "2.3.2",
   "description": "A configurable Hapi web server",
   "main": "lib/electrode-server.js",
   "scripts": {
@@ -62,6 +62,8 @@
     "inert": "^5.1.0",
     "intercept-stdout": "^0.1.2",
     "mitm": "^1.2.0",
+    "prettier": "^1.19.1",
+    "run-verify": "^1.2.2",
     "superagent": "^3.0.0"
   },
   "nyc": {
@@ -84,5 +86,11 @@
     "functions": 100,
     "lines": 100,
     "cache": true
+  },
+  "prettier": {
+    "printWidth": 100
+  },
+  "publishConfig": {
+    "tag": "ver2"
   }
 }
