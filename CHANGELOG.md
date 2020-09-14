@@ -1,3 +1,7 @@
+# 3.2.0 - 09/14/2020
+
+- add support for HTTP/2
+
 # 2.2.2 - 02/07/2019
 
 - avoid auto aborting in production mode, or inspect mode
