@@ -1,3 +1,7 @@
+# 2.4.0 - 09/14/2020
+
+- support for HTTP/2
+
 # 2.3.0 - 09/11/2019
 
 - look for hapi plugin from module through hapiPlugin field (#44)
