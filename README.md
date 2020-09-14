@@ -180,7 +180,7 @@ myConfig.listener = (emitter) => {
 
 ### `http2` (Object)
 
-> Note: Requires version ^3.2.0
+> Note: Requires version ^3.2.0 or ^2.4.0
 
 To enable http2, set `http2.enable` to true. All options are passed to [`createSecureServer()`](https://nodejs.org/api/http2.html#http2_http2_createsecureserver_options_onrequesthandle).
 
