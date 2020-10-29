@@ -114,12 +114,21 @@ describe("electrode-server", function() {
   });
 
   it("should set keepalive to 60 seconds", function() {
-    return electrodeServer()
-      .then(server => {
-        expect(server.listener.keepAliveTimeout).eq(60000);
-        return server;
-      })
-      .then(stopServer);
+    return electrodeServer().then(server => {
+      expect(server.listener.keepAliveTimeout).eq(60000);
+      stopServer(server);
+    });
+  });
+
+  it("can configure keep-alive timeout", function() {
+    return electrodeServer({
+      electrode: {
+        keepAliveTimeout: 6001
+      }
+    }).then(server => {
+      expect(server.listener.keepAliveTimeout).eq(6001);
+      stopServer(server);
+    });
   });
 
   it("multiple listeners should all set keepalive to 60 seconds", function() {
