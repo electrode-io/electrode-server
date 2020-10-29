@@ -198,7 +198,9 @@ NodeJS defaults to 5 seconds keep-alive timeout. `electrode-server` defaults to 
 
 ```json
 {
-  "keepAliveTimeout": 60000
+  "electrode": {
+    "keepAliveTimeout": 60000
+  }
 }
 ```
 
