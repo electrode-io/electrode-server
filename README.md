@@ -194,6 +194,18 @@ To enable http2, set `http2.enable` to true. All options are passed to [`createS
 }
 ```
 
+### `keepAliveTimeout` (integer)
+
+NodeJS defaults to 5 seconds keep-alive timeout. `electrode-server` defaults to 60 seconds timeout. If you want a custom timeout, use the `keepAliveTimeout` option (in milliseconds).
+
+```json
+{
+  "electrode": {
+    "keepAliveTimeout": 60000
+  }
+}
+```
+
 ### logLevel
 
 You can control how much output the Electrode Server logs to the console by setting the `logLevel`.
@@ -419,7 +431,7 @@ Hit `http://localhost:9000`
 ### Publishing
 
 - Require access to npmjs.org to publish this package.
-- Run `npm version` to update the version.  Commit with tags
+- Run `npm version` to update the version. Commit with tags
 - Run `npm publish` to publish
 - Update CHANGELOG.md
 
