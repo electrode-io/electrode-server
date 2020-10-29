@@ -98,6 +98,15 @@ describe("electrode-server", function() {
     });
   });
 
+  it("can specify custom keepalive timeout in config", function() {
+    return electrodeServer({
+      keepAliveTimeout: 6001
+    }).then(server => {
+      expect(server.listener.keepAliveTimeout).eq(6001);
+      stopServer(server);
+    });
+  });
+
   it("should pass plugin options", () => {
     const options = {
       test: "foo"
