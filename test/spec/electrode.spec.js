@@ -113,6 +113,40 @@ describe("electrode-server", function() {
       });
   });
 
+  it("should set keepalive to 60 seconds", function() {
+    return electrodeServer().then(server => {
+      expect(server.listener.keepAliveTimeout).eq(60000);
+      stopServer(server);
+    });
+  });
+
+  it("can configure keep-alive timeout", function() {
+    return electrodeServer({
+      electrode: {
+        keepAliveTimeout: 6001
+      }
+    }).then(server => {
+      expect(server.listener.keepAliveTimeout).eq(6001);
+      stopServer(server);
+    });
+  });
+
+  it("multiple listeners should all set keepalive to 60 seconds", function() {
+    return electrodeServer({
+      connections: {
+        default: { port: 8000 },
+        two: { port: 8001 }
+      }
+    })
+      .then(server => {
+        expect(server.connections.length).eq(2);
+        expect(server.connections[0].listener.keepAliveTimeout).eq(60000);
+        expect(server.connections[1].listener.keepAliveTimeout).eq(60000);
+        return server;
+      })
+      .then(stopServer);
+  });
+
   it("should fail if plugins.requireFromPath is not string", function() {
     let error;
     return electrodeServer({ electrode: { logLevel: "none" }, plugins: { requireFromPath: {} } })

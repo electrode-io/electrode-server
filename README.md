@@ -130,6 +130,18 @@ Default is just empty object:
 }
 ```
 
+### `keepAliveTimeout` (milliseconds)
+
+NodeJS defaults keep-alive timeout to 5 seconds. `electrode-server` defaults to 60 seconds. If you want a custom timeout, use the `keepAliveTimeout` option (in milliseconds).
+
+```json
+{
+  "electrode": {
+    "keepAliveTimeout": 60000
+  }
+}
+```
+
 ### `listener` (function)
 
 - A function to install event listeners for the electrode server startup lifecycle.
