@@ -79,6 +79,24 @@ describe("electrode-server", function() {
       .then();
   });
 
+  it("should default keepalive timeout to 60 seconds", function() {
+    return electrodeServer().then(server => {
+      expect(server.listener.keepAliveTimeout).eq(60000);
+      stopServer(server);
+    });
+  });
+
+  it("can specify custom keepalive timeout in config", function() {
+    return electrodeServer({
+      electrode: {
+        keepAliveTimeout: 6001
+      }
+    }).then(server => {
+      expect(server.listener.keepAliveTimeout).eq(6001);
+      stopServer(server);
+    });
+  });
+
   it("should make default connections the connection", function() {
     return electrodeServer({
       connections: {
