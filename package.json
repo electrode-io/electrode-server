@@ -51,11 +51,11 @@
   "dependencies": {
     "async-eventemitter": "^0.2.2",
     "bluebird": ">= 2.10.0 <= 3.x.x",
-    "chalk": "^2.4.2",
+    "chalk": "^4.1.0",
     "electrode-confippet": "^1.2.10",
     "hapi": "^17.5.0",
-    "lodash": "^4.17.11",
-    "require-at": "^1.0.1"
+    "lodash": "^4.17.20",
+    "require-at": "^1.0.6"
   },
   "devDependencies": {
     "electrode-archetype-njs-module-dev": "^3.0.0",
