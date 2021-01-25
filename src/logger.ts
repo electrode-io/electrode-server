@@ -1,7 +1,5 @@
 /* eslint-disable no-console, prefer-spread */
 
-"use strict";
-
 const LEVELS = {
   info: 10,
   warn: 20,
@@ -25,25 +23,25 @@ const logger = {
     }
   },
 
-  info(/* messages */) {
+  info(...args) {
     if (level <= LEVELS.info) {
-      console.info.apply(console, arguments);
+      console.info.apply(console, args);
     }
   },
 
-  warn(/* messages */) {
+  warn(...args) {
     if (level <= LEVELS.warn) {
-      console.warn.apply(console, arguments);
+      console.warn.apply(console, args);
     }
     return;
   },
 
-  error(/* messages */) {
+  error(...args) {
     if (level <= LEVELS.error) {
-      console.error.apply(console, arguments);
+      console.error.apply(console, args);
     }
     return;
   }
 };
 
-module.exports = logger;
+export = logger;

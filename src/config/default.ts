@@ -1,5 +1,3 @@
-"use strict";
-
 const defaultListenPort = 3000;
 
 const portFromEnv = () => {
@@ -44,6 +42,6 @@ module.exports = {
     source: "default",
     hostIP: "127.0.0.1",
     registerPluginsTimeout: 25000,
-    "$applied$electrodeServerConfigDefaults": true
+    $applied$electrodeServerConfigDefaults: true
   }
 };

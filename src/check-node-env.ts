@@ -1,9 +1,7 @@
-"use strict";
 
-const _ = require("lodash");
-const Chalk = require("chalk");
-
-const logger = require("./logger.js");
+import _ from "lodash";
+import Chalk from "chalk";
+import logger from "./logger.js";
 
 function checkNodeEnv() {
   const allowed = ["qa", "development", "staging", "production", "test"];
@@ -17,4 +15,4 @@ function checkNodeEnv() {
   return;
 }
 
-module.exports = checkNodeEnv;
+export = checkNodeEnv;

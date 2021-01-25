@@ -139,3 +139,4 @@ node_modules
 .nyc_output
 *-lock.*
 .vscode
+lib/

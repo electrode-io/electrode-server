@@ -4,9 +4,11 @@
   "description": "A configurable Hapi web server",
   "main": "lib/electrode-server.js",
   "scripts": {
-    "prepublishOnly": "clap test",
-    "test": "clap test",
-    "coverage": "clap check",
+    "build": "tsc",
+    "mv": "mkdir -p lib/config && cp src/config/**.* lib/config",
+    "prepublishOnly": "xrun [[build], xarc/check]",
+    "test": "xrun --serial [build, mv, xarc/test-only]",
+    "coverage": "xrun --serial [build, mv, xarc/test-cov]",
     "sample": "node test/sample/index.js"
   },
   "repository": {
@@ -59,11 +61,34 @@
   },
   "devDependencies": {
     "@hapi/inert": "^5.2.2",
+    "@istanbuljs/nyc-config-typescript": "^1.0.1",
+    "@types/chai": "^4.2.14",
+    "@types/mocha": "^8.2.0",
+    "@types/node": "^14.14.16",
+    "@types/sinon": "^9.0.10",
+    "@types/sinon-chai": "^3.2.5",
+    "@typescript-eslint/eslint-plugin": "^4.11.0",
+    "@typescript-eslint/parser": "^4.11.0",
+    "@xarc/module-dev": "^3.0.2",
+    "@xarc/run": "^1.0.4",
+    "babel-eslint": "^10.1.0",
+    "chai": "^4.2.0",
     "electrode-archetype-njs-module-dev": "^3.0.0",
+    "eslint": "^7.16.0",
+    "eslint-config-walmart": "^2.2.1",
+    "eslint-plugin-filenames": "^1.1.0",
+    "eslint-plugin-jsdoc": "^30.7.9",
     "intercept-stdout": "^0.1.2",
     "mitm": "^1.2.0",
+    "mocha": "^8.2.1",
+    "nyc": "^15.1.0",
     "run-verify": "^1.2.1",
-    "superagent": "^5.0.0"
+    "sinon": "^9.2.2",
+    "sinon-chai": "^3.5.0",
+    "source-map-support": "^0.5.19",
+    "superagent": "^5.0.0",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.1.3"
   },
   "nyc": {
     "all": true,
@@ -73,22 +98,57 @@
       "text-summary"
     ],
     "exclude": [
-      "coverage",
       "*clap.js",
+      "*clap.ts",
+      "coverage",
+      "src",
+      "lib/**/*.ts",
+      "docs",
       "gulpfile.js",
-      "dist",
-      "test"
+      "test",
+      "xrun*.js",
+      "xrun*.ts"
     ],
     "check-coverage": true,
     "statements": 100,
     "branches": 100,
     "functions": 100,
     "lines": 100,
-    "cache": true
+    "cache": true,
+    "extends": [
+      "@istanbuljs/nyc-config-typescript"
+    ],
+    "exclude-after-remap": false
   },
   "prettier": {
     "printWidth": 100,
     "arrowParens": "avoid",
     "trailingComma": "none"
+  },
+  "@xarc/module-dev": {
+    "features": [
+      "eslint",
+      "eslintTS",
+      "mocha",
+      "typescript"
+    ]
+  },
+  "mocha": {
+    "require": [
+      "ts-node/register",
+      "source-map-support/register",
+      "@xarc/module-dev/config/test/setup.js"
+    ],
+    "recursive": true
+  },
+  "eslintConfig": {
+    "extends": [
+      "./node_modules/@xarc/module-dev/config/eslint/.eslintrc-node"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+      "ecmaVersion": 2020,
+      "sourceType": "module"
+    }
   }
 }
