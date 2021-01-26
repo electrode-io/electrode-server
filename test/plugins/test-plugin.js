@@ -1,5 +1,3 @@
-"use strict";
-
 function testPlugin(server) {
   server.expose({});
 }

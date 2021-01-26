@@ -1,5 +1,3 @@
-"use strict";
-
 module.exports = {
   listener: emitter => {
     emitter.on("config-composed", (data, next) => {

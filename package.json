@@ -145,6 +145,9 @@
     "extends": [
       "./node_modules/@xarc/module-dev/config/eslint/.eslintrc-node"
     ],
+    "env": {
+      "mocha": true
+    },
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
       "ecmaVersion": 2020,

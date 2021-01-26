@@ -1,5 +1,3 @@
-"use strict";
-
 //
 // simple plugin to provide server.app.config in request.app.config
 //

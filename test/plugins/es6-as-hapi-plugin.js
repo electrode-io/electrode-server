@@ -1,5 +1,3 @@
-"use strict";
-
 function es6AsHapiPlugin(server) {
   server.expose({});
 }
