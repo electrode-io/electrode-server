@@ -1,5 +1,3 @@
-"use strict";
-
 const eventReceived = [];
 const config = {
   connection: {

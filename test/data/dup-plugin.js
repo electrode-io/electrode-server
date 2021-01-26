@@ -1,5 +1,3 @@
-"use strict";
-
 function nulPlugin() {}
 
 module.exports = {

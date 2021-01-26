@@ -1,5 +1,3 @@
-"use strict";
-
 const Path = require("path");
 const Chalk = require("chalk");
 const _ = require("lodash");

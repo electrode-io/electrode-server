@@ -1,5 +1,3 @@
-"use strict";
-
 function nulPlugin() {
   return Promise.reject("plugin_failure");
 }

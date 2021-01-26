@@ -1,5 +1,3 @@
-"use strict";
-
 function es6StylePlugin(server) {
   server.expose({});
 }

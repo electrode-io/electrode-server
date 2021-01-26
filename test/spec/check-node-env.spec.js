@@ -1,5 +1,3 @@
-"use strict";
-
 const checkNodeEnv = require("../../lib/check-node-env.js");
 const logger = require("../../lib/logger.js");
 const Chai = require("chai");

@@ -1,5 +1,3 @@
-"use strict";
-
 function register() {
   throw new Error("fail-plugin");
 }

@@ -1,5 +1,3 @@
-"use strict";
-
 function pluginNoPriority(server) {
   return !server.app.plugin2 && "pluginNoPriority is called before plugin2";
 }

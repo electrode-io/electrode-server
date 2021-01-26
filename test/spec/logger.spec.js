@@ -1,6 +1,5 @@
-"use strict";
-
 const Chai = require("chai");
+const expect = Chai.expect;
 const logger = require("../../lib/logger.js");
 const sinon = require("sinon");
 

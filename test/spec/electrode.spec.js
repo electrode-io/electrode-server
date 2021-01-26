@@ -1,5 +1,6 @@
-"use strict";
-
+/* eslint-disable max-statements, no-invalid-this, no-unused-expressions, no-console */
+const Chai = require("chai");
+const expect = Chai.expect;
 const path = require("path");
 const electrodeServer = require("../..");
 const assert = require("chai").assert;

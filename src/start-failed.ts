@@ -1,11 +1,11 @@
-"use strict";
-
 /* eslint-disable max-len, no-magic-numbers */
 
-const Chalk = require("chalk");
+import Chalk from "chalk";
 const ErrorCommon = require("./error-common");
 const logger = require("./logger.js");
-const _ = require("lodash");
+
+import _ from "lodash";
+
 const { PLUGIN_KEY } = require("./symbols");
 
 const cleanStack = stacks => {
@@ -13,7 +13,7 @@ const cleanStack = stacks => {
   return stacks.map(x => x.replace(cwd, "."));
 };
 
-module.exports = function startFailed(err) {
+export = function startFailed(err) {
   const errors = {
     EADDRINUSE: () => {
       return {

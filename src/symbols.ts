@@ -1,5 +1,3 @@
-"use strict";
-
-module.exports = {
+export = {
   PLUGIN_KEY: Symbol("plugin_key")
 };
